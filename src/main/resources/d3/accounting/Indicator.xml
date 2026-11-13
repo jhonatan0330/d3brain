@@ -60,12 +60,6 @@
 		<include refid="paginationIndicatorFragment" />
 	</select>
 
-	<select id="count" parameterType="IndicatorFilterDTO" resultType="int">
-		select count(*)
-		from account.indicador_ind
-		<include refid="whereIndicatorFragment" />
-	</select>
-
 	<select id="insert" parameterType="IndicatorDTO" resultType="IndicatorDTO">
 		insert into account.indicador_ind(cind_llave
 		<if test="nombre!=null">,cind_nombre</if>
@@ -92,5 +86,6 @@
 			cind_estado = #{estado}
 		<include refid="whereIndicatorPrimaryKeyFragment" />
 	</select>
+
 
 </mapper>

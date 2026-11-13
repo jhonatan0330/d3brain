@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import d3.CacheManager;
 import d3.shared.application.BasicSvc;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
@@ -21,16 +22,14 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 
 	private final ServidorMapper servidorMapper;
 	private final Environment env;
+	private final CacheManager cacheManager;
 
 	public ServidorSvc(@Lazy ServidorMapper servidorMapper,
-			Environment env) {
+			Environment env, @Lazy CacheManager cacheManager) {
 		this.servidorMapper = servidorMapper;
 		this.env = env;
+		this.cacheManager = cacheManager;
 	}
-
-	private ServidorDTO localServer;
-
-	private ServidorDTO ftpServer;
 
 	@Override
 	public ServidorDTO consultaXId(String llave) throws ServerException {
@@ -50,16 +49,16 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ServidorDTO actualizar(ServidorDTO dto) throws ServerException {
 		validateDTO(dto);
-		localServer = null;
-		ftpServer = null;
+		cacheManager.clearLocalServer();
+		cacheManager.clearFtpServer();
 		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ServidorDTO inactivar(ServidorDTO dto) throws ServerException {
-		localServer = null;
-		ftpServer = null;
+		cacheManager.clearLocalServer();
+		cacheManager.clearFtpServer();
 		return super.inactivar(dto);
 	}
 
@@ -67,8 +66,8 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ServidorDTO guardar(ServidorDTO dto) throws ServerException {
 		validateDTO(dto);
-		localServer = null;
-		ftpServer = null;
+		cacheManager.clearLocalServer();
+		cacheManager.clearFtpServer();
 		return super.guardar(dto);
 	}
 
@@ -93,19 +92,19 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	}
 
 	public ServidorDTO getLocalServer() {
-		return localServer;
+		return cacheManager.getLocalServer();
 	}
 
 	public ServidorDTO getFTPServer() {
-		return ftpServer;
+		return cacheManager.getFtpServer();
 	}
 
 	public void setLocalServer(ServidorDTO _server) {
-		this.localServer = _server;
+		cacheManager.setLocalServer(_server);
 	}
 
 	public void setFTPServer(ServidorDTO _server) {
-		this.ftpServer = _server;
+		cacheManager.setFtpServer(_server);
 	}
 
 	public ServidorDTO resolveServer() throws ServerException {
@@ -125,6 +124,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	}
 
 	public ServidorDTO resolveLocalServer() throws ServerException {
+		ServidorDTO localServer = getLocalServer();
 		if (localServer != null)
 			return localServer;
 		String _configPathToLocalFiles = env.getProperty("app.pathFiles");

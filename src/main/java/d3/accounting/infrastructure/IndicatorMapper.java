@@ -13,7 +13,6 @@ public interface IndicatorMapper {
 
 	IndicatorDTO update(IndicatorDTO dto);
 
-	int count(IndicatorFilterDTO filter);
 
 	IndicatorDTO getOne(IndicatorFilterDTO filter);
 

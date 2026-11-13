@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import d3.accounting.application.base.IndicatorService;
-import d3.accounting.domain.DatoTablaDTO;
+import d3.accounting.application.base.IndicatorTargetService;
 import d3.accounting.domain.IndicatorDTO;
 import d3.accounting.domain.IndicatorFilterDTO;
-import d3.accounting.domain.IndicatorResultadoDTO;
-import d3.accounting.domain.PeriodoDTO;
+import d3.accounting.domain.IndicatorTargetDTO;
+import d3.accounting.domain.IndicatorTargetFilterDTO;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
@@ -109,27 +109,24 @@ public class ConfigurationController {
 	private final ArbolEnsambladorSvc arbolEnsambladorService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
 	private final IndicatorService indicadorService;
+	private final IndicatorTargetService indicadorTargetService;
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
-	
 
 	public ConfigurationController(@Lazy ConsecutivoSvc consecutivoService,
 			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
 			@Lazy ServidorSvc servidorService, @Lazy WebServiceSvc webServiceService,
-			@Lazy WebServiceCopyAPI webServiceCopyAPI,
-			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy MensajeSvc mensajeService,
-			@Lazy MailUserSendMessage mailUserSendMessage,
+			@Lazy WebServiceCopyAPI webServiceCopyAPI, @Lazy WebServiceEjecucionSvc webServiceEjecucionService,
+			@Lazy MensajeSvc mensajeService, @Lazy MailUserSendMessage mailUserSendMessage,
 			@Lazy ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService,
 			@Lazy DocumentoPlantillaSvc documentoPlantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
 			@Lazy ReporteBaseSvc reporteBaseService, @Lazy ProcesoSvc procesoService,
-			@Lazy ProcesoEstadoSvc procesoEstadoService,
-			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc propiedadService,
-			@Lazy RelacionInternaSvc relacionInternaService, @Lazy ExportConfigurationFileService exportService,
-			@Lazy ImportConfigurationFileService importService,
-			@Lazy ArbolEnsambladorSvc arbolEnsambladorService, 
-			@Lazy IndicatorService indicadorService, @Lazy RolAccesoSvc rolAccesoService,
-			@Lazy UsuarioSvc usuarioService) {
+			@Lazy ProcesoEstadoSvc procesoEstadoService, @Lazy ProcesoTransicionSvc procesoTransicionService,
+			@Lazy PropiedadSvc propiedadService, @Lazy RelacionInternaSvc relacionInternaService,
+			@Lazy ExportConfigurationFileService exportService, @Lazy ImportConfigurationFileService importService,
+			@Lazy ArbolEnsambladorSvc arbolEnsambladorService, @Lazy IndicatorService indicadorService,  @Lazy IndicatorTargetService indicadorTargetService,
+			@Lazy RolAccesoSvc rolAccesoService, @Lazy UsuarioSvc usuarioService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
 		this.organizacionService = organizacionService;
@@ -153,10 +150,10 @@ public class ConfigurationController {
 		this.arbolEnsambladorService = arbolEnsambladorService;
 		this.propertyTypeService = propiedadValorDefinidoService;
 		this.indicadorService = indicadorService;
+		this.indicadorTargetService = indicadorTargetService;
 		this.rolAccesoService = rolAccesoService;
 		this.usuarioService = usuarioService;
 	}
-
 
 	// ==================== CONSECUTIVES ====================
 
@@ -200,7 +197,6 @@ public class ConfigurationController {
 	@PostMapping("/property-values/list")
 	public List<PropiedadValorDefinidoDTO> listarValoresDefinidos(@RequestBody PropiedadValorDefinidoFilterDTO filter)
 			throws ServerException {
-		
 		return propiedadValorDefinidoService.listarConsulta(filter);
 	}
 
@@ -210,8 +206,7 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/property-values/by-origen")
-	public List<PropiedadValorDefinidoDTO> listarPorOrigen(@RequestBody PropiedadValorDefinidoFilterDTO filter){
-		
+	public List<PropiedadValorDefinidoDTO> listarPorOrigen(@RequestBody PropiedadValorDefinidoFilterDTO filter) {
 		return propiedadValorDefinidoService.listarPorOrigen(filter);
 	}
 
@@ -244,7 +239,6 @@ public class ConfigurationController {
 	@PostMapping("/organizations/list")
 	public List<OrganizacionDTO> listarOrganizaciones(@RequestBody OrganizacionFilterDTO filter)
 			throws ServerException {
-		
 		return organizacionService.listarConsulta(filter);
 	}
 
@@ -282,7 +276,6 @@ public class ConfigurationController {
 
 	@PostMapping("/servers/list")
 	public List<ServidorDTO> listarServidores(@RequestBody ServidorFilterDTO filter) throws ServerException {
-		
 		return servidorService.listarConsulta(filter);
 	}
 
@@ -315,7 +308,7 @@ public class ConfigurationController {
 
 	@PostMapping("/web-services/list")
 	public List<WebServiceDTO> listarWebServices(@RequestBody WebServiceFilterDTO filter) throws ServerException {
-		
+
 		return webServiceService.listarConsulta(filter);
 	}
 
@@ -345,12 +338,9 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/web-services/{key}/copy")
-	public d3.shared.domain.SharedIdResponse copiarWebService(@PathVariable("key") String pKey)
-			throws ServerException {
+	public d3.shared.domain.SharedIdResponse copiarWebService(@PathVariable("key") String pKey) throws ServerException {
 		return webServiceCopyAPI.call(pKey);
 	}
-
-
 
 	@PostMapping("/web-services/{key}/execute")
 	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable("key") String pKey) throws ServerException {
@@ -365,7 +355,7 @@ public class ConfigurationController {
 		if (filter.getFechaEjecucionMin() == null || filter.getFechaEjecucionMax() == null) {
 			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar ejecuciones");
 		}
-		
+
 		return webServiceEjecucionService.listarConsulta(filter);
 	}
 
@@ -373,21 +363,19 @@ public class ConfigurationController {
 	public List<WebServiceEjecucionDTO> listarEjecucionesPorWebService(
 			@PathVariable("webServiceKey") String pWebServiceKey, @RequestBody WebServiceEjecucionFilterDTO filter)
 			throws ServerException {
-		
+
 		filter.setServicio(pWebServiceKey);
 		return webServiceEjecucionService.listarConsulta(filter);
 	}
 
 	// ==================== MESSAGES ====================
 
-	
-
 	@PostMapping("/messages/list")
 	public List<MensajeDTO> listarMensajes(@RequestBody MensajeFilterDTO request) throws ServerException {
 		if (request.getFechaMin() == null || request.getFechaMax() == null) {
 			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar mensajes");
 		}
-	
+
 		return mensajeService.mensajesUsuario(request);
 	}
 
@@ -403,14 +391,11 @@ public class ConfigurationController {
 		return mailUserSendMessage.call(filter);
 	}
 
-
 	// ==================== AUTO TASKS ====================
 
-	
-
 	@PostMapping("/auto-tasks/list")
-	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(@RequestBody ProcesoTransicionAutomaticaFilterDTO request)
-			throws ServerException {
+	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(
+			@RequestBody ProcesoTransicionAutomaticaFilterDTO request) throws ServerException {
 		return procesoTransicionAutomaticaService.listarConsulta(request);
 	}
 
@@ -444,7 +429,6 @@ public class ConfigurationController {
 		return procesoTransicionAutomaticaService.activar(dto);
 	}
 
-	
 	@PostMapping("/auto-tasks/{key}/schedule")
 	public ProcesoTransicionAutomaticaDTO programarTareaAutomatica() throws ServerException {
 		return procesoTransicionAutomaticaService.programar();
@@ -463,7 +447,7 @@ public class ConfigurationController {
 	@PostMapping("/document-templates/list")
 	public List<DocumentoPlantillaDTO> listarPlantillas(@RequestBody DocumentoPlantillaFilterDTO filter)
 			throws ServerException {
-		
+
 		return documentoPlantillaService.listarConsulta(filter);
 	}
 
@@ -475,7 +459,6 @@ public class ConfigurationController {
 	@PostMapping("/document-templates/admin")
 	public List<DocumentoPlantillaDTO> listarPlantillasAdministrador(@RequestBody DocumentoPlantillaFilterDTO filter)
 			throws ServerException {
-		
 		return documentoPlantillaService.listarConsulta(filter);
 	}
 
@@ -517,7 +500,6 @@ public class ConfigurationController {
 	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantilla(
 			@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter) throws ServerException {
-		
 		filter.setNodoSuperior(pTemplateKey);
 		filter.setPaginacionRegistroFinal(500);
 		return documentoPlantillaCaracteristicaService.listarConsulta(filter);
@@ -557,7 +539,7 @@ public class ConfigurationController {
 	@PostMapping("/document-templates/{templateKey}/reports")
 	public List<ReporteBaseDTO> listarReportesPlantilla(@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody ReporteBaseFilterDTO filter) throws ServerException {
-		
+
 		filter.setNodoSuperior(pTemplateKey);
 		return reporteBaseService.listarConsulta(filter);
 	}
@@ -588,8 +570,7 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/document-templates/{templateKey}/transitions")
-	public List<ProcesoTransicionDTO> listarTransicionesPlantilla(
-			@PathVariable("templateKey") String pTemplateKey,
+	public List<ProcesoTransicionDTO> listarTransicionesPlantilla(@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
 
 		filter.setPlantilla(pTemplateKey);
@@ -600,7 +581,7 @@ public class ConfigurationController {
 
 	@PostMapping("/processes/list")
 	public List<ProcesoDTO> listarProcesos(@RequestBody ProcesoFilterDTO filter) throws ServerException {
-		
+
 		return procesoService.listarConsulta(filter);
 	}
 
@@ -634,7 +615,6 @@ public class ConfigurationController {
 	@PostMapping("/processes/{processKey}/transitions")
 	public List<ProcesoTransicionDTO> listarTransiciones(@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
-		
 		filter.setNodoSuperior(pProcessKey);
 		return procesoTransicionService.listarConsulta(filter);
 	}
@@ -669,7 +649,7 @@ public class ConfigurationController {
 	@PostMapping("/processes/{processKey}/states")
 	public List<ProcesoEstadoDTO> listarEstados(@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoEstadoFilterDTO filter) throws ServerException {
-		
+
 		filter.setNodoSuperior(pProcessKey);
 		return procesoEstadoService.listarConsulta(filter);
 	}
@@ -701,15 +681,10 @@ public class ConfigurationController {
 
 	// ==================== PROPERTIES ====================
 
-	
-
 	@PostMapping("/properties/list")
 	public List<PropiedadDTO> listarPropiedades(@RequestBody PropiedadFilterDTO request) throws ServerException {
-
 		return propiedadService.listarConsulta(request);
 	}
-
-	
 
 	@PostMapping("/properties/by-id/{key}")
 	public PropiedadDTO consultarPropiedad(@PathVariable("key") String pKey) throws ServerException {
@@ -739,7 +714,8 @@ public class ConfigurationController {
 	// --- Relations ---
 
 	@PostMapping("/properties/{propiedad}/relations")
-	public List<RelacionInternaDTO> listarRelaciones(@PathVariable("propiedad") String pPropiedad) throws ServerException {
+	public List<RelacionInternaDTO> listarRelaciones(@PathVariable("propiedad") String pPropiedad)
+			throws ServerException {
 		return relacionInternaService.relacionesPropiedad(pPropiedad);
 	}
 
@@ -758,11 +734,17 @@ public class ConfigurationController {
 		return relacionInternaService.inactivar(dto);
 	}
 
+	@PostMapping(value = "/getPropertyRelations")
+	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter)
+			throws ServerException {
+		return relacionInternaService.listarConsulta(filter);
+	}
+
 	// ==================== ROLES (acceso) ====================
 
 	@PostMapping("/roles/list")
 	public List<RolAccesoDTO> listarRoles(@RequestBody RolAccesoFilterDTO filter) throws ServerException {
-		
+
 		if (filter.getEstado() == null || filter.getEstado().isEmpty()) {
 			filter.setEstado(SharedConstants.STATE_ACTIVE);
 		}
@@ -774,7 +756,7 @@ public class ConfigurationController {
 
 	@PostMapping("/users/search")
 	public List<UsuarioDTO> listarUsuarios(@RequestBody UsuarioFilterDTO filter) throws ServerException {
-		
+
 		if (filter.getEstado() == null || filter.getEstado().isEmpty()) {
 			filter.setEstado(SharedConstants.STATE_ACTIVE);
 		}
@@ -785,8 +767,6 @@ public class ConfigurationController {
 	public UsuarioDTO consultarUsuario(@RequestBody String key) throws ServerException {
 		return usuarioService.consultaXId(key);
 	}
-
-	
 
 	// ==================== PROPERTY LOOKUP (antes /property/*) ====================
 
@@ -824,45 +804,12 @@ public class ConfigurationController {
 
 	@PostMapping("/indicators/list")
 	public List<IndicatorDTO> listarIndicadores(@RequestBody IndicatorFilterDTO filter) throws ServerException {
-		
 		return indicadorService.getMany(filter);
 	}
 
 	@PostMapping("/indicators/{key}")
 	public IndicatorDTO consultarIndicador(@PathVariable("key") String pKey) throws ServerException {
 		return indicadorService.getById(pKey);
-	}
-
-	public static class IndicadorResultadoRequest {
-		private String indicadorId;
-		private PeriodoDTO periodo;
-
-		public String getIndicadorId() {
-			return indicadorId;
-		}
-
-		public void setIndicadorId(String indicadorId) {
-			this.indicadorId = indicadorId;
-		}
-
-		public PeriodoDTO getPeriodo() {
-			return periodo;
-		}
-
-		public void setPeriodo(PeriodoDTO periodo) {
-			this.periodo = periodo;
-		}
-	}
-
-	@PostMapping("/indicators/result")
-	public IndicatorResultadoDTO obtenerResultadoIndicador(@RequestBody IndicadorResultadoRequest request)
-			throws ServerException {
-		return indicadorService.getResultado(request.getIndicadorId(), request.getPeriodo());
-	}
-
-	@PostMapping("/indicators/{key}/table")
-	public List<DatoTablaDTO> obtenerTablaIndicador(@PathVariable("key") String pKey) throws ServerException {
-		return indicadorService.getTabla(pKey);
 	}
 
 	@PostMapping("/indicators/create")
@@ -888,54 +835,87 @@ public class ConfigurationController {
 	public IndicatorDTO activarIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
 		if (dto == null || dto.getLlaveTabla() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
-		return indicadorService.activar(dto);
+		return indicadorService.activate(dto);
 	}
-	
-	@PostMapping(value = "/getPropertyRelations")
-	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter)
+
+	// ==================== INDICATORS TARGET ====================
+
+	@PostMapping("/target/list")
+	public List<IndicatorTargetDTO> listarTarget(@RequestBody IndicatorTargetFilterDTO filter)
 			throws ServerException {
-		return relacionInternaService.listarConsulta(filter);
+		return indicadorTargetService.getMany(filter);
 	}
-	
+
+	@PostMapping("/target/{key}")
+	public IndicatorTargetDTO consultarTarget(@PathVariable("key") String pKey) throws ServerException {
+		return indicadorTargetService.getById(pKey);
+	}
+
+	@PostMapping("/target/create")
+	public IndicatorTargetDTO crearTarget(@RequestBody IndicatorTargetDTO dto) throws ServerException {
+		indicadorTargetService.save(dto);
+		return dto;
+	}
+
+	@PostMapping("/target/update")
+	public IndicatorTargetDTO actualizarTarget(@RequestBody IndicatorTargetDTO dto) throws ServerException {
+		indicadorTargetService.update(dto);
+		return dto;
+	}
+
+	@PostMapping("/target/inactivate")
+	public IndicatorTargetDTO inactivarTarget(@RequestBody IndicatorTargetDTO dto) throws ServerException {
+		if (dto == null || dto.getLlaveTabla() == null)
+			throw new ServerException("La llave del indicador se encuentra vacia");
+		return indicadorTargetService.delete(dto.getLlaveTabla());
+	}
+
+	@PostMapping("/target/activate")
+	public IndicatorTargetDTO activarTarget(@RequestBody IndicatorTargetDTO dto) throws ServerException {
+		if (dto == null || dto.getLlaveTabla() == null)
+			throw new ServerException("La llave del indicador se encuentra vacia");
+		return indicadorTargetService.activate(dto);
+	}
+
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
 
-		@GetMapping("/export")
-		private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
-			return exportService.call();
-		}
+	@GetMapping("/export")
+	private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
+		return exportService.call();
+	}
 
-		@PostMapping("/module")
-		private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
-				throws ServerException {
-			return exportService.call(modules);
-		}
+	@PostMapping("/module")
+	private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
+			throws ServerException {
+		return exportService.call(modules);
+	}
 
-		@PostMapping("/import")
-		private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
-			return importService.call(file);
-		}
+	@PostMapping("/import")
+	private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
+		return importService.call(file);
+	}
 
-		@PostMapping("/compare")
-		private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
-			return importService.compare(file);
-		}
+	@PostMapping("/compare")
+	private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
+		return importService.compare(file);
+	}
 
-		@PostMapping("/tree/{key}/graph")
-		public NodoArbolDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
-			ProcesoFilterDTO filter = new ProcesoFilterDTO();
-			filter.setLlaveTabla(pKey);
-			return arbolEnsambladorService.obtenerProcesoParaGraficar(filter);
-		}
-		
-		@PostMapping("/tree")
-		private NodoArbolDTO getConfigTree() throws ServerException {
-			return arbolEnsambladorService.construirArbolSimple();
-		}
-		
-		@PostMapping("/tree/node")
-		private NodoArbolDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
-				throws ServerException {
-			return arbolEnsambladorService.construirHijos(request);
-		}
+	@PostMapping("/tree/{key}/graph")
+	public NodoArbolDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
+		ProcesoFilterDTO filter = new ProcesoFilterDTO();
+		filter.setLlaveTabla(pKey);
+		return arbolEnsambladorService.obtenerProcesoParaGraficar(filter);
+	}
+
+	@PostMapping("/tree")
+	private NodoArbolDTO getConfigTree() throws ServerException {
+		return arbolEnsambladorService.construirArbolSimple();
+	}
+
+	@PostMapping("/tree/node")
+	private NodoArbolDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
+			throws ServerException {
+		return arbolEnsambladorService.construirHijos(request);
+	}
 
 }

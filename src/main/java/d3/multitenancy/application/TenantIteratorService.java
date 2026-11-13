@@ -60,7 +60,7 @@ public class TenantIteratorService {
 					TenantContext.setCurrentTenant(tenantId);
 					encolarHijos(tenantId, pendientes, visitados);
 				} catch (Exception e) {
-					System.err.println("Error encolando hijos de tenant duplicado " + tenantId + ": "
+					System.err.println("Error encolando hijos del " + describirTenant(tenantId) + ": "
 							+ e.getMessage());
 				} finally {
 					TenantContext.clear();
@@ -73,12 +73,13 @@ public class TenantIteratorService {
 					task.execute(tenantId);
 					ejecutados++;
 				} catch (Exception e) {
-					System.err.println("Error en tenant " + tenantId + ": " + e.getMessage());
+					System.err.println("Error en " + describirTenant(tenantId) + ": " + e.getMessage());
 				}
 				try {
 					encolarHijos(tenantId, pendientes, visitados);
 				} catch (Exception e) {
-					System.err.println("Error encolando hijos de tenant " + tenantId + ": " + e.getMessage());
+					System.err.println("Error encolando hijos del " + describirTenant(tenantId) + ": "
+							+ e.getMessage());
 				}
 			} finally {
 				TenantContext.clear();
@@ -107,8 +108,8 @@ public class TenantIteratorService {
 			List<TenantDTO> hijos = tenantMapper.getMany(filter);
 			return hijos != null ? hijos : new ArrayList<>();
 		} catch (Exception e) {
-			System.err.println("No se pudieron listar hijos de " + TenantContext.getCurrentTenant() + ": "
-					+ e.getMessage());
+			System.err.println("No se pudieron listar hijos del "
+					+ describirTenant(TenantContext.getCurrentTenant()) + ": " + e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -143,6 +144,24 @@ public class TenantIteratorService {
 		}
 		String normalizada = url.trim();
 		return normalizada.isEmpty() ? null : normalizada;
+	}
+
+	private String describirTenant(String tenantId) {
+		String id = normalizarTenant(tenantId);
+		if (id.isEmpty()) {
+			return "tenant=desconocido";
+		}
+		String nombre = null;
+		try {
+			nombre = metadataProvider.resolve(id).map(TenantDTO::getName)
+					.filter(valor -> valor != null && !valor.isBlank()).map(String::trim).orElse(null);
+		} catch (Exception e) {
+			nombre = null;
+		}
+		if (nombre == null || nombre.equals(id)) {
+			return "tenant=" + id;
+		}
+		return "tenant=" + nombre + " (id=" + id + ")";
 	}
 
 	@FunctionalInterface

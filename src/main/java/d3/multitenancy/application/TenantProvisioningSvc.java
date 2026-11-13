@@ -104,7 +104,7 @@ public class TenantProvisioningSvc {
 			LocalDate fechaBloqueo = LocalDate.now().plusMonths(2);
 			verificarDuplicados(padre, codigo, url);
 			clonarBaseDatos(servidor, datosPadre, baseDatos, rol, clave, fechaBloqueo);
-			aprovisionarDesdePlantilla(url, rol, clave);
+			aprovisionarDesdePlantilla(url, rol, clave, codigo, nombre);
 			crearAdministrador(url, rol, clave, dto, nombre, codigo);
 			registrarCatalogo(padre, key, nombre, codigo, url, rol, clave, dto.getImagen(), fechaBloqueo);
 			asignarUsuario(key, codigo, solicitante);
@@ -305,15 +305,17 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void aprovisionarDesdePlantilla(String url, String rol, String clave) throws ServerException {
+	private void aprovisionarDesdePlantilla(String url, String rol, String clave, String codigo, String nombre)
+			throws ServerException {
 		TenantDTO temporal = new TenantDTO();
 		temporal.setDatasourceUrl(url);
 		temporal.setDatasourceUsername(rol);
 		temporal.setDatasourcePassword(clave);
 		DataSource nuevaDs = dataSourceFactory.createPooledDataSource(temporal);
 		try {
-			System.out.println("Aplicando deltas pendientes sobre BD clonada -> " + new Date());
-			scriptExecutor.ejecutarPendientesHastaHoyExigente(nuevaDs);
+			System.out.println("[tenant=" + nombre + " (id=" + codigo + ")] Aplicando deltas pendientes sobre BD clonada -> "
+					+ new Date());
+			scriptExecutor.ejecutarPendientesHastaHoyExigente(nuevaDs, codigo, nombre);
 		} finally {
 			if (nuevaDs instanceof PooledDataSource pooled) {
 				pooled.forceCloseAll();

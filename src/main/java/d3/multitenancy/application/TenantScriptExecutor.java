@@ -21,6 +21,8 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import d3.multitenancy.domain.TenantDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
 import d3.multitenancy.domain.TenantProvisionFase;
 import d3.shared.domain.ServerException;
 
@@ -29,24 +31,38 @@ public class TenantScriptExecutor {
 
 	private static final Pattern FECHA_VERSION = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
 
+	private final TenantMetadataProvider metadataProvider;
+
+	public TenantScriptExecutor(TenantMetadataProvider metadataProvider) {
+		this.metadataProvider = metadataProvider;
+	}
+
 	public boolean ejecutarPendientesHastaHoy(DataSource tenantDs) {
-		String actualString = leerVersionActual(tenantDs);
+		return ejecutarPendientesHastaHoy(tenantDs, TenantContext.getCurrentTenant(), null);
+	}
+
+	public boolean ejecutarPendientesHastaHoy(DataSource tenantDs, String tenantId) {
+		return ejecutarPendientesHastaHoy(tenantDs, tenantId, null);
+	}
+
+	public boolean ejecutarPendientesHastaHoy(DataSource tenantDs, String tenantId, String tenantName) {
+		String etiqueta = etiquetaTenant(tenantId, tenantName);
+		String actualString = leerVersionActual(tenantDs, tenantId, tenantName);
 		if (actualString == null) {
-			printError();
+			printError(etiqueta, "No se pudo leer la version actual de la base de datos");
 			return true;
 		}
 		Date actualDate;
 		try {
 			actualDate = new SimpleDateFormat("yyyy-MM-dd").parse(actualString);
 		} catch (ParseException e) {
-			printError();
-			System.out.println(e.getMessage());
+			printError(etiqueta, "La version de la base de datos no es una fecha valida: " + actualString);
 			return true;
 		}
-		System.out.println("Fecha actual en BD = " + actualDate);
-		System.out.println("*********************************************************");
-		System.out.println("************ COMIENZA A ACTUALIZAR **********************");
-		System.out.println("*********************************************************");
+		System.out.println(etiqueta + " Fecha actual en BD = " + actualString);
+		System.out.println(etiqueta + " *********************************************************");
+		System.out.println(etiqueta + " ************ COMIENZA A ACTUALIZAR **********************");
+		System.out.println(etiqueta + " *********************************************************");
 		boolean error = false;
 		Calendar iterador = Calendar.getInstance();
 		iterador.setTime(actualDate);
@@ -55,32 +71,43 @@ public class TenantScriptExecutor {
 			String sqlName = buildSqlPath(iterador);
 			Resource fileSql = new ClassPathResource(sqlName);
 			if (fileSql.exists()) {
-				System.out.println("Ejecutando Script = " + sqlName + " -> " + new Date());
-				error = executeScript(tenantDs, fileSql);
+				System.out.println(etiqueta + " Ejecutando Script = " + sqlName + " -> " + new Date());
+				error = executeScript(tenantDs, fileSql, tenantId, tenantName);
 			}
 			iterador.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		if (!error) {
-			printSuccess();
+			printSuccess(etiqueta);
 		} else {
-			printScriptError();
+			printScriptError(etiqueta);
 		}
 		return error;
 	}
 
 	public void ejecutarPendientesHastaHoyExigente(DataSource tenantDs) throws ServerException {
-		String actualString = leerVersionActual(tenantDs);
+		ejecutarPendientesHastaHoyExigente(tenantDs, TenantContext.getCurrentTenant(), null);
+	}
+
+	public void ejecutarPendientesHastaHoyExigente(DataSource tenantDs, String tenantId) throws ServerException {
+		ejecutarPendientesHastaHoyExigente(tenantDs, tenantId, null);
+	}
+
+	public void ejecutarPendientesHastaHoyExigente(DataSource tenantDs, String tenantId, String tenantName)
+			throws ServerException {
+		String etiqueta = etiquetaTenant(tenantId, tenantName);
+		String actualString = leerVersionActual(tenantDs, tenantId, tenantName);
 		if (actualString == null) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.SCRIPTS_DELTAS,
-					"La base de datos nueva no reporta version (COMMENT ON TABLE usuario_usrp)");
+					etiqueta + " La base de datos nueva no reporta version (COMMENT ON TABLE usuario_usrp)");
 		}
 		Date actualDate;
 		try {
 			actualDate = new SimpleDateFormat("yyyy-MM-dd").parse(actualString);
 		} catch (ParseException e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.SCRIPTS_DELTAS,
-					"La version de la base de datos nueva no es una fecha valida: " + actualString, e);
+					etiqueta + " La version de la base de datos nueva no es una fecha valida: " + actualString, e);
 		}
+		System.out.println(etiqueta + " Fecha actual en BD = " + actualString);
 		Calendar iterador = Calendar.getInstance();
 		iterador.setTime(actualDate);
 		iterador.add(Calendar.DAY_OF_MONTH, 1);
@@ -88,14 +115,24 @@ public class TenantScriptExecutor {
 			String sqlName = buildSqlPath(iterador);
 			Resource fileSql = new ClassPathResource(sqlName);
 			if (fileSql.exists()) {
-				System.out.println("Ejecutando Script = " + sqlName + " -> " + new Date());
-				ejecutarScriptExigente(tenantDs, fileSql);
+				System.out.println(etiqueta + " Ejecutando Script = " + sqlName + " -> " + new Date());
+				ejecutarScriptExigente(tenantDs, fileSql, tenantId, tenantName);
 			}
 			iterador.add(Calendar.DAY_OF_MONTH, 1);
 		}
 	}
 
 	public void ejecutarScriptExigente(DataSource ds, Resource fileSql) throws ServerException {
+		ejecutarScriptExigente(ds, fileSql, TenantContext.getCurrentTenant(), null);
+	}
+
+	public void ejecutarScriptExigente(DataSource ds, Resource fileSql, String tenantId) throws ServerException {
+		ejecutarScriptExigente(ds, fileSql, tenantId, null);
+	}
+
+	public void ejecutarScriptExigente(DataSource ds, Resource fileSql, String tenantId, String tenantName)
+			throws ServerException {
+		String etiqueta = etiquetaTenant(tenantId, tenantName);
 		DataSourceTransactionManager tm = new DataSourceTransactionManager(ds);
 		try {
 			new TransactionTemplate(tm).executeWithoutResult(ts -> {
@@ -107,8 +144,9 @@ public class TenantScriptExecutor {
 				}
 			});
 		} catch (RuntimeException e) {
+			System.err.println(etiqueta + " Fallo ejecutando " + describirRecurso(fileSql) + ": " + e.getMessage());
 			throw TenantProvisionFase.fallar(TenantProvisionFase.SCRIPTS_DELTAS,
-					"Fallo ejecutando " + describirRecurso(fileSql), e);
+					etiqueta + " Fallo ejecutando " + describirRecurso(fileSql), e);
 		}
 	}
 
@@ -126,6 +164,14 @@ public class TenantScriptExecutor {
 	}
 
 	public String leerVersionActual(DataSource ds) {
+		return leerVersionActual(ds, TenantContext.getCurrentTenant(), null);
+	}
+
+	public String leerVersionActual(DataSource ds, String tenantId) {
+		return leerVersionActual(ds, tenantId, null);
+	}
+
+	public String leerVersionActual(DataSource ds, String tenantId, String tenantName) {
 		String result = null;
 		try (Connection conn = ds.getConnection();
 				Statement stmt = conn.createStatement();
@@ -137,8 +183,8 @@ public class TenantScriptExecutor {
 				result = rs.getString("description");
 			}
 		} catch (Exception e) {
-			System.err.println(
-					"Error leyendo fecha en tenant " + TenantContext.getCurrentTenant() + ": " + e.getMessage());
+			System.err.println(etiquetaTenant(tenantId, tenantName)
+					+ " Error leyendo fecha en la base de datos del tenant: " + e.getMessage());
 		}
 		return result;
 	}
@@ -152,7 +198,8 @@ public class TenantScriptExecutor {
 		}
 	}
 
-	private boolean executeScript(DataSource ds, Resource fileSql) {
+	private boolean executeScript(DataSource ds, Resource fileSql, String tenantId, String tenantName) {
+		String etiqueta = etiquetaTenant(tenantId, tenantName);
 		DataSourceTransactionManager tm = new DataSourceTransactionManager(ds);
 		try {
 			new TransactionTemplate(tm).executeWithoutResult(ts -> {
@@ -166,7 +213,11 @@ public class TenantScriptExecutor {
 			});
 			return false;
 		} catch (RuntimeException e) {
-			System.out.println(e.getMessage());
+			System.err.println(etiqueta + " Error ejecutando script " + describirRecurso(fileSql) + ": "
+					+ e.getMessage());
+			Throwable causa = e.getCause() != null ? e.getCause() : e;
+			System.err.println(etiqueta + " Causa: " + causa.getClass().getName() + ": " + causa.getMessage());
+			e.printStackTrace(System.err);
 			return true;
 		}
 	}
@@ -182,25 +233,61 @@ public class TenantScriptExecutor {
 		return value < 10 ? "0" + value : String.valueOf(value);
 	}
 
-	private void printError() {
-		System.out.println("*********************************************************");
-		System.out.println("*******                ERROR                     ********");
-		System.out.println("*******                                          ********");
-		System.out.println("*********************************************************");
+	private String etiquetaTenant(String tenantId, String tenantName) {
+		String id = idTenant(tenantId);
+		String nombre = nombreTenant(tenantId, tenantName);
+		if (id == null) {
+			return "[tenant=" + (nombre != null ? nombre : "desconocido") + "]";
+		}
+		if (nombre == null || nombre.equals(id)) {
+			return "[tenant=" + id + "]";
+		}
+		return "[tenant=" + nombre + " (id=" + id + ")]";
 	}
 
-	private void printSuccess() {
-		System.out.println("*******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
-		System.out.println("*******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
-		System.out.println("*******                                          ********");
-		System.out.println("****************:)****:)***:)***:)***:)******************");
+	private String idTenant(String tenantId) {
+		String id = tenantId;
+		if (id == null || id.isBlank()) {
+			id = TenantContext.getCurrentTenant();
+		}
+		return id == null || id.isBlank() ? null : id.trim();
 	}
 
-	private void printScriptError() {
-		System.out.println("*********************************************************");
-		System.out.println("*******     ERROR                   ERROR        ********");
-		System.out.println("*******                                          ********");
-		System.out.println("********!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********");
-		System.out.println("********XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*********");
+	private String nombreTenant(String tenantId, String tenantName) {
+		if (tenantName != null && !tenantName.isBlank()) {
+			return tenantName.trim();
+		}
+		String id = idTenant(tenantId);
+		if (id == null || metadataProvider == null) {
+			return null;
+		}
+		try {
+			return metadataProvider.resolve(id).map(TenantDTO::getName)
+					.filter(nombre -> nombre != null && !nombre.isBlank()).map(String::trim).orElse(null);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private void printError(String etiqueta, String detalle) {
+		System.out.println(etiqueta + " *********************************************************");
+		System.out.println(etiqueta + " *******                ERROR                     ********");
+		System.out.println(etiqueta + " Detalle: " + detalle);
+		System.out.println(etiqueta + " *********************************************************");
+	}
+
+	private void printSuccess(String etiqueta) {
+		System.out.println(etiqueta + " *******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
+		System.out.println(etiqueta + " *******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
+		System.out.println(etiqueta + " *******                                          ********");
+		System.out.println(etiqueta + " ****************:)****:)***:)***:)***:)******************");
+	}
+
+	private void printScriptError(String etiqueta) {
+		System.out.println(etiqueta + " *********************************************************");
+		System.out.println(etiqueta + " *******     ERROR                   ERROR        ********");
+		System.out.println(etiqueta + " *******                                          ********");
+		System.out.println(etiqueta + " ********!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********");
+		System.out.println(etiqueta + " ********XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*********");
 	}
 }

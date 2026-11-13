@@ -10,6 +10,7 @@ import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.users.domain.ServidorDTO;
 
 import net.sf.jasperreports.engine.JasperReport;
 
@@ -35,6 +36,9 @@ final class TenantCacheState {
 	private final Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new ConcurrentHashMap<>();
 	private final Map<String, RolAccesoDTO> rolesMap = new ConcurrentHashMap<>();
 	private final Map<String, JasperReport> reportsMap = new ConcurrentHashMap<>();
+
+	private volatile ServidorDTO localServer;
+	private volatile ServidorDTO ftpServer;
 
 	List<PropiedadValorDefinidoDTO> getTypes() {
 		return types;
@@ -100,6 +104,22 @@ final class TenantCacheState {
 		return reportsMap;
 	}
 
+	ServidorDTO getLocalServer() {
+		return localServer;
+	}
+
+	void setLocalServer(ServidorDTO localServer) {
+		this.localServer = localServer;
+	}
+
+	ServidorDTO getFtpServer() {
+		return ftpServer;
+	}
+
+	void setFtpServer(ServidorDTO ftpServer) {
+		this.ftpServer = ftpServer;
+	}
+
 	void clearAll() {
 		types = null;
 		propByTypeMap.clear();
@@ -113,5 +133,7 @@ final class TenantCacheState {
 		fieldsMap.clear();
 		rolesMap.clear();
 		reportsMap.clear();
+		localServer = null;
+		ftpServer = null;
 	}
 }

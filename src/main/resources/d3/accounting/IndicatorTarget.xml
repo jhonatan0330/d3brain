@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.accounting.infrastructure.IndicatorTargetMapper">
+
+	<sql id="selectIndicatorTargetFragment">
+		select
+			cimt_llave as llaveTabla
+			,cimt_indicador as indicador
+			,cimt_nombre as nombre
+			,nimt_valorsuperior as valorSuperior
+			,nimt_valorinferior as valorInferior
+			,cimt_color as color
+			,cimt_estado as estado
+		from account.indicadormeta_imt
+	</sql>
+	
+	<sql id="whereIndicatorTargetFragment">
+		where 1=1
+		<if test="key!=null">
+			and cimt_llave = #{key}
+		</if>
+		<if test="state!=null">
+			and cimt_estado = #{state}
+		</if>
+		<if test="indicador!=null">
+			and cimt_indicador = #{indicador}
+		</if>
+		<if test="filter!=null">
+			and (upper(cimt_nombre) like upper('%' || #{filter} || '%'))
+		</if>
+	</sql>
+
+
+	<sql id="paginationIndicatorTargetFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereIndicatorTargetPrimaryKeyFragment">
+		where cimt_llave = #{llaveTabla}
+	</sql>
+
+	<select id="getOne" parameterType="IndicatorTargetFilterDTO" resultType="IndicatorTargetDTO">
+		<include refid="selectIndicatorTargetFragment" />
+		<include refid="whereIndicatorTargetFragment" />
+		LIMIT 2
+	</select>
+
+	<select id="getMany" parameterType="IndicatorTargetFilterDTO" resultType="IndicatorTargetDTO">
+		<include refid="selectIndicatorTargetFragment" />
+		<include refid="whereIndicatorTargetFragment" />
+		order by nimt_valorinferior
+		<include refid="paginationIndicatorTargetFragment" />
+	</select>
+
+	<select id="insert" parameterType="IndicatorTargetDTO" resultType="IndicatorTargetDTO">
+		insert into account.indicadormeta_imt(cimt_llave
+		<if test="indicador!=null">,cimt_indicador</if>
+		<if test="nombre!=null">,cimt_nombre</if>
+		<if test="valorSuperior!=null">,nimt_valorsuperior</if>
+		<if test="valorInferior!=null">,nimt_valorinferior</if>
+		<if test="color!=null">,cimt_color</if>
+		<if test="estado!=null">,cimt_estado</if>
+		) values (#{llaveTabla}
+		<if test="indicador!=null">,#{indicador}</if>
+		<if test="nombre!=null">,#{nombre}</if>
+		<if test="valorSuperior!=null">,#{valorSuperior}</if>
+		<if test="valorInferior!=null">,#{valorInferior}</if>
+		<if test="color!=null">,#{color}</if>
+		<if test="estado!=null">,#{estado}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="IndicatorTargetDTO" resultType="IndicatorTargetDTO">
+		update account.indicadormeta_imt
+		set
+			cimt_nombre = #{nombre},
+			cimt_indicador = #{indicador},
+			nimt_valorsuperior = #{valorSuperior},
+			nimt_valorinferior = #{valorInferior},
+			cimt_color = #{color},
+			cimt_estado = #{estado}
+		<include refid="whereIndicatorTargetPrimaryKeyFragment" />
+	</select>
+
+</mapper>

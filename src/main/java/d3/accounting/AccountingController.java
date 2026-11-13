@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import d3.accounting.application.ApiAccountVoucherService;
+import d3.accounting.application.IndicatorCreateService;
 import d3.accounting.application.PlanGetAccountService;
 import d3.accounting.application.PlanGetBalanceService;
 import d3.accounting.application.PlanGetCatalogService;
@@ -27,6 +28,7 @@ import d3.accounting.application.VoucherRangeService;
 import d3.accounting.application.VoucherReCreateService;
 import d3.accounting.domain.AccountDTO;
 import d3.accounting.domain.CatalogDTO;
+import d3.accounting.domain.IndicatorDTO;
 import d3.accounting.domain.ResultMapDTO;
 import d3.accounting.domain.Voucher;
 import d3.accounting.domain.VoucherDTO;
@@ -53,13 +55,14 @@ public class AccountingController {
 	private final ApiAuthorizeService apiAuthorizeService;
 	private final ApiAccountVoucherService voucherService;
 	private final StackAccountProccessService accountService;
+	private final IndicatorCreateService indicatorService;
 
 	public AccountingController(@Lazy VoucherCreateService createService, @Lazy VoucherDeleteService deleteService,
 			@Lazy VoucherGetService getVoucherService, @Lazy VoucherReCreateService recreateService,
 			@Lazy VoucherRangeService range, @Lazy PlanGetCatalogService getCatalogService,
 			@Lazy PlanGetAccountService getAccountService, @Lazy PlanGetBalanceService getBalanceService,
 			@Lazy ApiAuthorizeService apiAuthorizeService, @Lazy ApiAccountVoucherService voucherService,
-			@Lazy StackAccountProccessService accountService) {
+			@Lazy StackAccountProccessService accountService, @Lazy IndicatorCreateService indicatorService) {
 		this.createService = createService;
 		this.deleteService = deleteService;
 		this.getVoucherService = getVoucherService;
@@ -71,6 +74,7 @@ public class AccountingController {
 		this.apiAuthorizeService = apiAuthorizeService;
 		this.voucherService = voucherService;
 		this.accountService = accountService;
+		this.indicatorService = indicatorService;
 	}
 
 	// ==================== VOUCHER ENDPOINTS ====================
@@ -144,6 +148,29 @@ public class AccountingController {
 	public List<CatalogDTO> getCatalog() throws ServerException {
 		return getCatalogService.getActive();
 	}
+
+	// ==================== INDICATOR ENDPOINTS ====================
+
+	@GetMapping("/indicators")
+	public List<IndicatorDTO> getIndicators() throws ServerException {
+		return indicatorService.getToDashboard();
+	}
+	/*
+	@GetMapping("/indicators/{key}")
+	public IndicatorDTO getIndicator(@PathVariable(name = "key") String pKey) throws ServerException {
+		return indicatorService.getById(pKey);
+	}
+
+	@PostMapping("/indicators/{key}/result")
+	public ResultMapDTO getIndicatorResult(@PathVariable(name = "key") String pKey,
+			@RequestBody TimeFrameDTO periodo) throws ServerException {
+		return indicatorService.getResultado(pKey, periodo);
+	}
+
+	@GetMapping("/indicators/{key}/table")
+	public List<ResultMapDTO> getIndicatorTable(@PathVariable(name = "key") String pKey) throws ServerException {
+		return indicatorService.getTabla(pKey);
+	}*/
 
 	// ==================== API ENDPOINTS (antes api_account) ====================
 

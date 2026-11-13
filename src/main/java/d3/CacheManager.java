@@ -15,6 +15,7 @@ import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.multitenancy.application.TenantContext;
 import d3.multitenancy.application.TenantDataSourcesConfigurationProperties;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.users.domain.ServidorDTO;
 
 import net.sf.jasperreports.engine.JasperReport;
 
@@ -193,6 +194,22 @@ public class CacheManager {
 		return current().getReportsMap();
 	}
 
+	public ServidorDTO getLocalServer() {
+		return current().getLocalServer();
+	}
+
+	public void setLocalServer(ServidorDTO localServer) {
+		current().setLocalServer(localServer);
+	}
+
+	public ServidorDTO getFtpServer() {
+		return current().getFtpServer();
+	}
+
+	public void setFtpServer(ServidorDTO ftpServer) {
+		current().setFtpServer(ftpServer);
+	}
+
 	// ---------------------------------------------
 	// CLEAR FUNCTIONS (current tenant)
 	// ---------------------------------------------
@@ -244,6 +261,14 @@ public class CacheManager {
 	/** Limpia los reportes compilados solo del tenant actual. */
 	public void clearReports() {
 		current().getReportsMap().clear();
+	}
+
+	public void clearLocalServer() {
+		current().setLocalServer(null);
+	}
+
+	public void clearFtpServer() {
+		current().setFtpServer(null);
 	}
 
 	// ----------------------------------------------------------

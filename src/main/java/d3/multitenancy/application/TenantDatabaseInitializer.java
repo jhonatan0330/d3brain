@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantMetadataProvider;
 
 @Component
@@ -32,18 +33,26 @@ public class TenantDatabaseInitializer implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) {
 		tenantIteratorService.executeForAllTenants(tenant -> {
-			System.out.println("*********************************************************");
-			System.out.println("Inicializando tenant: " + tenant);
-			System.out.println("*********************************************************");
-			doSomethingAfterStartup(tenant);
+			TenantDTO datos = metadataProvider.resolve(tenant)
+					.orElseThrow(() -> new IllegalStateException("Tenant no encontrado: " + tenant));
+			System.out.println("********** Inicializando tenant: " + nombreTenant(datos, tenant) +" **********");
+			doSomethingAfterStartup(datos, tenant);
 		});
 	}
 
-	private void doSomethingAfterStartup(String tenantId) {
-		DataSource tenantDs = metadataProvider.resolve(tenantId).map(dto -> routingDataSource)
-				.orElseThrow(() -> new IllegalStateException("Tenant no encontrado: " + tenantId));
-		String actualString = scriptExecutor.leerVersionActual(tenantDs);
-		System.out.println("Fecha actual BD [" + tenantId + "] = " + actualString);
-		scriptExecutor.ejecutarPendientesHastaHoy(tenantDs);
+	private void doSomethingAfterStartup(TenantDTO datos, String tenantId) {
+		DataSource tenantDs = routingDataSource;
+		String tenantName = datos.getName();
+		String actualString = scriptExecutor.leerVersionActual(tenantDs, tenantId, tenantName);
+		System.out.println("Fecha actual BD [" + nombreTenant(datos, tenantId) + "] = " + actualString);
+		scriptExecutor.ejecutarPendientesHastaHoy(tenantDs, tenantId, tenantName);
+	}
+
+	private String nombreTenant(TenantDTO datos, String tenantId) {
+		String nombre = datos != null ? datos.getName() : null;
+		if (nombre == null || nombre.isBlank()) {
+			return tenantId;
+		}
+		return nombre.trim() + " (id=" + tenantId + ")";
 	}
 }
