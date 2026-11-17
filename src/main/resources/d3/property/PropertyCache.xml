@@ -236,6 +236,39 @@
         where cpvd_origen = 'L' and cpvd_estado = 'A'
         and cpvd_llave = 'PROP_107'
         and cdpl_llave in  (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
+        union
+        select 
+			cdpc_llave as  llaveTabla
+            ,'RELATIONS_FORM' as  propiedadValor
+            ,'L' as  tipo
+            ,'RELATIONS_FORM' as  nombre
+            ,'RELATIONS_FORMS'  as  key
+            ,cppd_valor as  campo
+            ,cdpl_llave as  valor
+            ,cdpl_nombre as  codigo
+            ,cdpc_nombre as  texto
+            ,null as  fechaDefinicion
+            ,null as  fechaImplementacion
+            ,null as  cambioCreacion
+            ,null as  cambioEliminacion
+            ,null as  rol
+            ,null as  rolNombre
+            ,null as  rolExcluyente
+			,null as  rolExcluyenteNombre
+            ,null as  fechaInicial
+            ,null as  fechaFinal
+            ,null as  usuario
+            ,null as  usuarioNombre
+      		,null as  usuarioExcluyente
+			,null as  usuarioExcluyenteNombre
+      		,null as  motivo
+      		,null as  bloqueo
+      		,0 as  relaciones
+            ,'A' as estado
+		from propiedad_ppdp pp 
+			inner join documentoplantillacaracteristica_dpcp dc on dc.cdpc_llave = pp.cppd_campo and dc.cdpc_estado = 'A'
+			inner join documentoplantilla_dplp dp on dp.cdpl_llave = dc.cdpc_plantilla and dp.cdpl_estado = 'A' and dp.cdpl_tipo != 'U'
+		where pp.cppd_propiedadvalor = 'PROP_19' and pp.cppd_estado = 'A'
         order by nombre, key
     </select>
 
@@ -251,7 +284,41 @@
             and (dppd_fechainicial is null or dppd_fechainicial <![CDATA[ < ]]> #{fecha})
             and (dppd_fechafinal is null or dppd_fechafinal > #{fecha})
         </if>
-        order by nombre, key, fechainicial, dppd_fechafinal , usuario, rol
+        union
+        select 
+			cdpc_llave as  llaveTabla
+            ,'RELATIONS_FORM' as  propiedadValor
+            ,'L' as  tipo
+            ,'RELATIONS_FORM' as  nombre
+            ,'RELATIONS_FORMS'  as  key
+            ,cppd_valor as  campo
+            ,cdpl_llave as  valor
+            ,cdpl_nombre as  codigo
+            ,cdpc_nombre as  texto
+            ,null as  fechaDefinicion
+            ,null as  fechaImplementacion
+            ,null as  cambioCreacion
+            ,null as  cambioEliminacion
+            ,null as  rol
+            ,null as  rolNombre
+            ,null as  rolExcluyente
+			,null as  rolExcluyenteNombre
+            ,null as  fechaInicial
+            ,null as  fechaFinal
+            ,null as  usuario
+            ,null as  usuarioNombre
+      		,null as  usuarioExcluyente
+			,null as  usuarioExcluyenteNombre
+      		,null as  motivo
+      		,null as  bloqueo
+      		,0 as  relaciones
+            ,'A' as estado
+		from propiedad_ppdp pp 
+			inner join documentoplantillacaracteristica_dpcp dc on dc.cdpc_llave = pp.cppd_campo and dc.cdpc_estado = 'A'
+			inner join documentoplantilla_dplp dp on dp.cdpl_llave = dc.cdpc_plantilla and dp.cdpl_estado = 'A' and dp.cdpl_tipo != 'U'
+		where pp.cppd_propiedadvalor = 'PROP_19' and pp.cppd_estado = 'A'
+			and pp.cppd_valor in (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
+        order by nombre, key, fechaInicial, fechaFinal , usuario, rol
     </select>
     
     <select id="getUserRole" resultType="java.lang.String">

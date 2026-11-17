@@ -34,6 +34,10 @@ public class MailSendMessageToAdminService {
 	public void call(String messageTitle, String messageText, String adminMail) throws ServerException {
 		OrganizacionDTO principal = organizacionService.obtenerPrincipalPropiedades(SessionContext.getCurrentUserOrNull());
 		String _server = Propiedades.obtenerValor(principal, Propiedades.MAIL_SERVER);
+		if(_server ==null || _server.isEmpty()) {
+			System.out.println("Servidor de correo no configurado");
+			return;
+		}
 		try {
 			SimpleMailMessage message = new SimpleMailMessage();
 			message.setFrom(MailUtils.getFromMail(_server));

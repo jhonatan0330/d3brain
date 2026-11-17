@@ -133,10 +133,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return super.inactivar(dto);
 	}
 
-	public List<TemplateDTO> consultaUsuario() throws ServerException {
-		return listarPlantillasUsuario( null);
-	}
-
 	public TemplateDTO obtenerCampos(TemplateDTO dto, boolean external)
 			throws ServerException {
 		if (dto == null)
@@ -462,7 +458,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return estados;
 	}
 
-	private List<TemplateDTO> listarPlantillasUsuario(String pProfile)
+	public List<TemplateDTO> listarPlantillasUsuario(String pProfile)
 			throws ServerException {
 
 		String _user = SessionContext.getCurrentUserOrNull();

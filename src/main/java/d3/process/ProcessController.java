@@ -55,7 +55,7 @@ public class ProcessController {
 			return documentoplantillaService.consultaAuditor();
 		}
 		default:
-			return documentoplantillaService.consultaUsuario();
+			return documentoplantillaService.listarPlantillasUsuario(null);
 		}
 	}
 

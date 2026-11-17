@@ -57,23 +57,6 @@ public class DocumentController {
 		this.gestionService = gestionService;
 	}
 	
-	/*@PostMapping(value = "/saveDocument")
-	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document) throws ServerException {
-		PedidoVentaDTO result = new PedidoVentaDTO();
-		if (document.getLlaveTabla() == null) {
-			document = saveUpdateDocumentFunction.save(document, null);
-		} else {
-			document = saveUpdateDocumentFunction.update(document, null);
-		}
-		result.setNombre(document.getNombre());
-		result.setPlantilla(document.getPlantilla());
-		result.setLlaveTabla(document.getLlaveTabla());
-		result.setDescripcion(document.getDescripcion());
-		result.setEstadoExpediente(document.getEstadoExpediente());
-		result.setEstadoNombre(document.getEstadoNombre());
-		return result;
-	}*/
-	
 	@PostMapping(value = "/save")
 	public PedidoVentaDTO apiGuardarDocumento(@RequestBody PedidoVentaDTO documento,
 			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {

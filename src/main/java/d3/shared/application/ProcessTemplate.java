@@ -354,6 +354,8 @@ public class ProcessTemplate {
 											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_NUM" + SharedConstants.COMA_DOBLE
 											+ String.valueOf(i + 1) + SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
 											+ SharedConstants.COMA_DOBLE + iRelation.getValorTotal().intValue()
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_PRODUCTO" + SharedConstants.COMA_DOBLE + iRelation.getNombre()
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_PRODUCTO_CODE" + SharedConstants.COMA_DOBLE + iRelation.getProductoCodigo()
 											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_CANT" + SharedConstants.COMA_DOBLE
 											+ iRelation.getCantidad().intValue();
 									for (PropiedadDTO iProp : propertiesWithRelationField) {
