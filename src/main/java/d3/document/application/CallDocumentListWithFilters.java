@@ -514,15 +514,14 @@ public class CallDocumentListWithFilters {
 				throw new ServerException(e.getMessage());
 			}
 		}
-		/*if (dto.getPlantilla() == null)
+		if (dto.getPlantilla() == null)
 			throw new ServerException(
 					"Revise la plantilla para consultar los expedientes diponibles. Debe traer la plantilla actual para filtrar las transiciones validas");
 		try {
 			return pedidoVentaMapper.listarExpedientesDisponiblesDocumento(dto);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
-		}*/
-		return null;
+		}
 	}
 
 	private List<String> generateFiltersByStateFromProcess(PedidoVentaFilterDTO dto) {
