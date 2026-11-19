@@ -97,8 +97,6 @@ public class TipoProceso {
 			throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		if (campoHeredado1.isEmpty()) {// Los heredados trabajan solos
-			// System.out.format("\n[%s - %s] Validando.....",
-			// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 			if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 				pCampo.setValorText(null);
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
@@ -210,9 +208,6 @@ public class TipoProceso {
 					}
 				}
 			}
-		} else {
-			System.out.format("\n[%s - %s]  Campo heredado = %s, No se valida",
-					pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getCampoDTO().getNombre(), campoHeredado1);
 		}
 	}
 
@@ -453,10 +448,6 @@ public class TipoProceso {
 					updateInformativeService.call(pCampo);
 					return pCampo;
 				}
-				// System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",
-				// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-				// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
-				// pCampo.getValorOpcion());
 				bd = campoService.guardar(pCampo);
 				pCampo.setLlaveTabla(bd.getLlaveTabla());
 
@@ -475,16 +466,10 @@ public class TipoProceso {
 				generarPagos(pCampo);
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
 					tipoBodega.aplicarMovimientosBodega(pCampo);
-				// System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )",
-				// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-				// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
-				// pCampo.getValorOpcion());
 				// throw new ServerException("Probando");
 				updateInformativeService.call(pCampo);
 
 			} else {
-				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getNodoSuperiorNombre(),
-						pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), multiple);
 				if (bd == null) {
 					bd = campoService.guardar(pCampo);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
@@ -524,7 +509,6 @@ public class TipoProceso {
 		// if(pCampo.getLlaveTabla()!=null) campoService.inactivar(pCampo);
 		// anularMovimiento(pCampo); //OJO esto qe como estoy haciendo para anular
 		// movimeintos
-		System.out.format("\n%s Inactivando", pCampo.getCampoDTO().getNombre());
 		if (pCampo.getExpedientes() != null && pCampo.getExpedientes().size() != 0) {
 			for (PedidoVentaDTO procesoInactivar : pCampo.getExpedientes()) {
 				procesoInactivar.setEstado(SharedConstants.STATE_INACTIVE);

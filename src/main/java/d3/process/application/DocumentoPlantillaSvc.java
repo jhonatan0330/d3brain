@@ -1,7 +1,6 @@
 package d3.process.application;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -613,7 +612,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 			}
 		}
-		System.out.format("%s \n[%s] Listando (%s) plantillas ", new Date(), _user, _resultTemplates.size());
+		
 		return _resultTemplates;
 	}
 

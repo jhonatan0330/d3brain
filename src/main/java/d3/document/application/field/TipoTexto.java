@@ -27,8 +27,6 @@ public class TipoTexto {
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
-		// System.out.format("\n[%s - %s] Validando.....",
-		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorText() != null) {
 			pCampo.setValorText(D3Utils.cleanStartEndSpaces(pCampo.getValorText()));
 			if (pCampo.getValorText().isEmpty())

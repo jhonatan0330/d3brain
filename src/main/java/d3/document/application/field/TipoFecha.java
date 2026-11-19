@@ -34,8 +34,6 @@ public class TipoFecha {
 	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
-		// System.out.format("\n[%s - %s] Validando.....",
-		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorFecha() == null) {
 			// PAra factura electronica de roa debo colcoar la fecha actual automaticamente
 			// viene vacio

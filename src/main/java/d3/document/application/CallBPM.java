@@ -118,8 +118,6 @@ public class CallBPM {
 				Propiedades.MODIFICAR_CAMPO);
 		if (modificarCampo == null || modificarCampo.isEmpty())
 			return false;
-		System.out.format("\n%s (Modificando documento principal..... %s)", pCampo.getCampoDTO().getNombre(),
-				procesoDTO.getNombre());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, modificarCampo, null);
 		return true;
@@ -133,10 +131,8 @@ public class CallBPM {
 			for (PropiedadDTO iCamino : caminos) {
 				if (iCamino.getValor().compareTo("*") == 0 || iCamino.getValor().compareTo("+") == 0) {
 					caminosGestionar.add(iCamino.getValor());
-					System.out.format(" Camino (" + iCamino.getValor() + ")");
 				} else {
 					caminosGestionar.add(iCamino.getValor() + ";");
-					System.out.format(", Camino (%s)", iCamino.getValor());
 				}
 			}
 		}
@@ -161,8 +157,6 @@ public class CallBPM {
 			throw new ServerException("No se identifico el expediente");
 
 		if (caminosValidados.get(0).compareTo("+") != 0) {
-			System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(),
-					documento.getNombre());
 			if (procesoDTO.getEstadoExpediente() != null) {
 				ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
 						procesoDTO.getEstadoExpediente(), null, procesoDTO.getNombre());
@@ -226,10 +220,7 @@ public class CallBPM {
 			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(currentDocumentId);
 		if (gestionables != null && !gestionables.isEmpty()) {
-			System.out.format("\n[%s] Gestionando documentos que esten relacionados", currentDocumentName,
-					startDocument.getNombre());
 			for (PedidoVentaCaracteristicaDTO campo : gestionables) {
-				System.out.format("\n[] Relacion %s ( %s )", campo.getCampo(), campo.getValorText());
 				List<DocumentoRelacionExpedienteDTO> expedientesAnidados = null;
 				DocumentoRelacionExpedienteDTO relacionExpediente = new DocumentoRelacionExpedienteDTO();
 				if (campo.getValorOpcion() == null) {// En caso que sean multiples
@@ -284,7 +275,6 @@ public class CallBPM {
 			DocumentoPlantillaDTO plantillaNueva = plantillaService.consultaXId(nuevo.getPlantilla());
 			motivo = plantillaNueva.getNombre();
 		}
-		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo,
 				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, anterior.getHistorico(),
@@ -431,9 +421,6 @@ public class CallBPM {
 				if (maquinaEstados != null) {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
-						System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
-								pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
-								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
 						List<String> caminosGestionar = getCaminos(pCampo);
 						List<String> documentosGestionados = new ArrayList<String>();
 						documentosGestionados.add(pCampo.getDocumento());
@@ -454,9 +441,6 @@ public class CallBPM {
 					} else {
 						// Esto algun día lo voy a unir con el modificar
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION) != null) {
-							System.out.format("\n[%s (%s) - %s] Dividir documento...... %s",
-									pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
-									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 							dividirDocumento(procesoDTO, updaterDTO, pCampo.getDocumento());
 							// Lo coloco aqui porque se relacionaba todo
 							relacionarGestor(procesoDTO, updaterDTO, "Dividir documento");
@@ -504,9 +488,6 @@ public class CallBPM {
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS) == null) {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL) != null) {
-						System.out.format("\n[%s (%s) - %s] Incluir traza..... %s",
-								pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
-								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 						relacionarGestor(procesoDTO, updaterDTO, null);
 					}
 				}

@@ -152,8 +152,6 @@ public class CallManageTransition {
 			throw new ServerException(
 					"No se encuentra estado de llegada, en caso que no se modifiquen coloque el mismo estado.\n"
 							+ expedienteDTO.getNombre() + " - " + expedienteDTO.getDescripcion());
-		System.out.format("\n\n[%s] Procesando transicion (%s) del proceso (%s)", expedienteDTO.getNombre(),
-				pTransitionProcess.getNombre(), pTransitionProcess.getNodoSuperiorNombre());
 		String modificadorId = null;
 		PedidoVentaDineroDTO afectado = null;
 		// Estos documentos se crean en la transicion y deben ser procesados por el
@@ -204,12 +202,8 @@ public class CallManageTransition {
 			PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION,
 					pTransitionProcess.getLlaveTabla(), Propiedades.AFECTA_SALDO, SessionContext.getCurrentUserOrNull());
 			String afectaSaldo = prop==null?null:prop.getValor();
-			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
-					afectaSaldo);
 			afectado = moveBalanceDocument(expediente,  pTransitionProcess, valorModificador, dineroProcesado, afectaSaldo);
 
-			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(),
-					documentoDTO.getNombre());
 			// Creo la relacion del documento Gestor
 			relacionAnterior = relacionGestorService.trazar(expedienteDTO.getLlaveTabla(), modificadorId, nameTrace,
 					pTransitionProcess.getEstadoPartida(), pTransitionProcess.getEstadoLLegada(),
@@ -218,8 +212,6 @@ public class CallManageTransition {
 		}
 		// Se actualiza pedido
 		// si son los mismo creo que no necesito update ???????????
-		System.out.format("\n[%s] Se actualiza estado del documento de ( %s ) a ( %s )", expedienteDTO.getNombre(),
-				expedienteDTO.getEstadoNombre(), _stateTo.getNombre());
 		expedienteDTO.setEstadoExpediente(_stateTo.getLlaveTabla());
 		expedienteDTO.setEstadoNombre(_stateTo.getNombre());
 		// No se porque tenia esta linea
@@ -714,8 +706,6 @@ public class CallManageTransition {
 
 		BigDecimal _calculateNewSaldo = dinero.getSaldo().add(saldoDocumento.multiply(factor));
 
-		System.out.format("\n" + transicion.getNombre() + " [" + pExpediente.getNombre() + "] : " + dinero.getSaldo()
-				+ " + " + saldoDocumento.multiply(factor) + " = " + _calculateNewSaldo);
 		if (transicion.getEstadoPartida() == null) { // Para los documentos iniciales
 			if (afectaSaldo.compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
 				throw new ServerException("No es logico que inicie in proceso restando");
@@ -741,11 +731,6 @@ public class CallManageTransition {
 
 	private void validateSaldo(ProcesoTransicionDTO transicion, BigDecimal saldoDocumento,
 			PedidoVentaDineroDTO saldosCalculados, PedidoVentaDTO pExpediente) throws ServerException {
-		// System.out.format(
-		// "\n" + transicion.getNombre() + " (" + pExpediente.getNombre() + " : " +
-		// saldosCalculados.getValorTotal()
-		// + ")" + saldosCalculados.getSaldo() + " - " + saldoDocumento + " = " +
-		// saldosCalculados.getSaldo());
 		if (saldosCalculados.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
 			throw new ServerException(transicion.getNombre() + " ("
 					+ documentoService.consultaXId(pExpediente.getPlantilla()).getNombre() + " "
@@ -771,7 +756,6 @@ public class CallManageTransition {
 		PropiedadDTO ubicacion = Propiedades.obtenerParametro(pStateTo, Propiedades.UBICACION);
 		if (ubicacion == null)
 			return null;
-		System.out.format("\n......Buscando ubicacion del documento %s", pedido.getNombre());
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(ubicacion.getLlaveTabla());
 		if (relaciones == null || relaciones.isEmpty()) {
 			ubicacionService.close(pExpediente.getLlaveTabla(), pExpediente.getHistorico());

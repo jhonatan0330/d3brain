@@ -164,9 +164,6 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			gestor.setLlaveTabla(generarLlave());
 			documentoRelacionGestorMapper.insertHistoricTable(gestor);
 		}
-
-		System.out.format("\n[] TRACE por transicion %s, con estado inicial ( %s ) y estado final ( %s )",
-				gestor.getNombre(), gestor.getEstadoInicial(), gestor.getEstadoFinal());
 		return gestor;
 	}
 

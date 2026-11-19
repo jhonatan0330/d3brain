@@ -38,8 +38,6 @@ public class TipoNumero {
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
-		// System.out.format("\n[%s - %s] Validando.....",
-		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);

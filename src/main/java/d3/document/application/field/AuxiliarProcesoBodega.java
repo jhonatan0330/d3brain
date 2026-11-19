@@ -174,11 +174,6 @@ public class AuxiliarProcesoBodega {
 				for (PedidoVentaCaracteristicaDTO campoExpediente : expediente.getCaracteristicas()) {
 					for (RelacionInternaDTO rit : relaciones) {
 						if (campoExpediente.getCampo().compareTo(rit.getCampo()) == 0) {
-							System.out.format(
-									"\n[%s (%s) - %s] Inventario anidado de documento operacion(%s) iniciando en campo interno ( %s )",
-									pCampo.getCampoDTO().getNodoSuperiorNombre(), expediente.getNombre(),
-									pCampo.getCampoDTO().getNombre(), operacion,
-									campoExpediente.getCampoDTO().getNombre());
 							// La siguiente linea es redundante ya que lo consulte el campo completo
 							// //campo.setCampoDTO(caracteristicaService.consultaXId(campo.getCampo()));
 							if (campoExpediente.getCampoDTO().getTipo()
@@ -231,8 +226,6 @@ public class AuxiliarProcesoBodega {
 			throw new ServerException("Revise la operacion de la bodega, no se identifica el factor");
 
 		List<DeduccionProductoDTO> result = null;
-		System.out.format("\n[%s - %s] Gestionando inventario operacion", pCampo.getCampoDTO().getNodoSuperiorNombre(),
-				pCampo.getCampoDTO().getNombre());
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
@@ -240,8 +233,6 @@ public class AuxiliarProcesoBodega {
 				if (pCampo.getPrincipal() == null || detalle.getLlaveTabla() == null || detalle.getEstado() == null
 						|| detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					boolean deducirComposicion = false;// En transformacion se hacen las 2 operaciones
-					System.out.format("\n[%s - %s] Revisando producto %s", pCampo.getCampoDTO().getNodoSuperiorNombre(),
-							pCampo.getCampoDTO().getNombre(), detalle.getNombre());
 					if (!operacion.contains("C")) {
 						ProductoInventarioFilterDTO productoFilter = new ProductoInventarioFilterDTO();
 						// En box tenian varios inactivos y esto generaba errores

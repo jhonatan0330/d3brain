@@ -313,7 +313,6 @@ public class CallDocumentUpdateFromAutomatic {
 	private void relacionarGestor(PedidoVentaDTO anterior, String updaterDocumentId, String transaction)
 			throws ServerException {
 		anterior = pedidoService.consultaXId(anterior.getLlaveTabla());
-		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), updaterDocumentId, "Modificar Campos",
 				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, anterior.getHistorico(),

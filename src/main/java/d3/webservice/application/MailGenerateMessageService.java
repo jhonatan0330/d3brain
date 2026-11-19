@@ -94,7 +94,7 @@ public class MailGenerateMessageService {
 		}
 		// Si encontro mensaje
 		if (mensaje != null) {
-			System.out.format("\n[%s] Mensaje ( %s )", pedido.getNombre(), mensaje.getTexto());
+			
 			List<PropiedadDTO> destinatariosFijos = cacheService.obtenerPropiedades(tipo, campo,
 					Propiedades.MENSAJE_DESTINATARIO, usuarioToken);
 			List<UsuarioDTO> fijos = null;
@@ -200,8 +200,6 @@ public class MailGenerateMessageService {
 			}
 		}
 		if (destinatarios.isEmpty() && destinatariosExternos == null) {
-			System.out.format("\n[%s] Mensaje ( %s ) no tiene destinatario", documento.getNombre(),
-					formatosPlantilla.getNombre());
 			return;
 		}
 		List<PedidoVentaCaracteristicaDTO> camposMensaje = campoService.listarParaMensaje(documento.getLlaveTabla(),
@@ -282,8 +280,6 @@ public class MailGenerateMessageService {
 		mensaje.setParametros(parametros);
 
 		messageService.saveSimple(mensaje);
-		System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) ", documento.getNombre(),
-				formatosPlantilla.getNombre(), destinyMails);
 	}
 
 	private void formatEmail(Map<String, String> map, String key, String email) {
