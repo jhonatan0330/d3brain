@@ -86,13 +86,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	public ProcesoTransicionDTO guardar(ProcesoTransicionDTO dto) throws ServerException {
 		if (dto.getEstadoLLegada() == null)
 			dto.setEstadoLLegada(dto.getEstadoPartida());
-		/*if (dto.getPlantilla() == null && dto.getDocumentador()) {
-			ProcesoEstadoDTO inicial = null;
-			if (dto.getEstadoPartida() != null)
-				inicial = estadoService.consultaXId(dto.getEstadoPartida());
-			if (inicial == null || inicial.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0)
-				dto.setPlantilla(crearPlantilla(dto, null));
-		}*/
 		validarTransicion(dto);
 		dto = super.guardar(dto);
 		return dto;
@@ -201,7 +194,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				organizarEstadosNuevos(dto.getNodoSuperior(), dto.getPlantilla(), SharedConstants.STATE_INACTIVE, null);
 				organizarEstadosNuevos(dto.getNodoSuperior(), dto.getPlantilla(), SharedConstants.STATE_COMPLETE, null);
 			}
-			// dto.setDocumentador(true);
 		}
 		if (dto.getCodigo() == null)
 			dto.setCodigo((dto.getNombre().length() > 50) ? dto.getNombre().substring(0, 49) : dto.getNombre());

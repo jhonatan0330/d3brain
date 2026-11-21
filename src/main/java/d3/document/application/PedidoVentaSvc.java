@@ -334,9 +334,9 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 
 	public void clearPedidoResponse(PedidoVentaDTO pDTO) {
-		if (pDTO == null)
+		if (pDTO == null || pDTO.getCaracteristicas() == null)
 			return;
-
+		 
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
 			_iField.setCampoDTO(null);
 			_iField.setDependientes(null);

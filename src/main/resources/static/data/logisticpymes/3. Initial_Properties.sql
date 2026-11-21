@@ -687,3 +687,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple)
 	VALUES('PROP_318' , 'C', 'ACCIONES CRUD', 'PROCESO_ACCIONES', 'REQUISITO', 'J', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_319' , 'T', 'TRANSICION OCULTA', 'TRANSICION_OCULTA', 'REQUISITO',  true);

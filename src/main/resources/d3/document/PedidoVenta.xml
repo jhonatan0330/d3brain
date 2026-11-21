@@ -452,9 +452,9 @@
 		
 	<select id="listarExpedientesDisponiblesDocumento" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
 		<include refid="selectPedidoVentaFragment" />
-			 where cpdv_estadoexpediente  in (
-			 	select cptr_estadopartida from procesotransicion_ptrp where cptr_plantilla = #{plantilla} and cptr_estado ='A' and bptr_documentador = false and cptr_estadopartida is not null) 
-			 and cpdv_estado !='I'
+			inner join procesotransicion_ptrp on cpdv_estadoexpediente = cptr_estadopartida and cptr_estado ='A' and cptr_estadopartida is not null
+			inner join propiedad_ppdp pd on pd.cppd_propiedadvalor = 'PROP_319' and pd.cppd_estado = 'A' and pd.cppd_campo = cptr_llave 
+		where cpdv_estado !='I' and cptr_plantilla = #{plantilla}
 		 	<if test="fechaMin!=null">and dpdv_fecha >= #{fechaMin}</if>
 		    <if test="fechaMax!=null">and dpdv_fecha <![CDATA[ < ]]>  #{fechaMax}</if>
 		    <if test="nombre!=null">and cpdv_nombre = #{nombre}</if>
