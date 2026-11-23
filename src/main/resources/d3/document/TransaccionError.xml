@@ -36,7 +36,7 @@
 			<if test="fechaFinMax!=null">
 				and dter_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
 			</if>
-			<if test="usuario!=null">
+			<if test="usuario!=null and usuario!=''">
 				and cter_usuario = #{usuario}
 			</if>
 	</sql>
@@ -63,6 +63,7 @@
 	<select id="listar" parameterType="TransaccionErrorDTO" resultType="TransaccionErrorDTO">
 		<include refid="selectTransaccionErrorFragment" />
 		<include refid="whereTransaccionErrorFragment" />
+		order by dter_fechainicio desc
 		<include refid="paginationTransaccionErrorFragment" />
 	</select>
 

@@ -24,13 +24,13 @@
 			<if test="estado!=null">
 				and cuse_estado = #{estado}
 			</if>
-			<if test="sesion!=null">
+			<if test="sesion!=null and sesion!=''">
 				and cuse_sesion = #{sesion}
 			</if>
-			<if test="clave!=null">
+			<if test="clave!=null and clave!=''">
 				and cuse_clave = #{clave}
 			</if>
-			<if test="ip!=null">
+			<if test="ip!=null and ip!=''">
 				and cuse_ip = #{ip}
 			</if>
 			<if test="fechaMin!=null">
@@ -63,6 +63,7 @@
 	<select id="listar" parameterType="UsuarioSesionErrorDTO" resultType="UsuarioSesionErrorDTO">
 		<include refid="selectUsuarioSesionErrorFragment" />
 		<include refid="whereUsuarioSesionErrorFragment" />
+		order by duse_fecha desc
 		<include refid="paginationUsuarioSesionErrorFragment" />
 	</select>
 

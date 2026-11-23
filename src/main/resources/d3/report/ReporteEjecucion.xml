@@ -26,10 +26,10 @@
 			<if test="estado!=null">
 				and crej_estado = #{estado}
 			</if>
-			<if test="reporte!=null">
+			<if test="reporte!=null and reporte!=''">
 				and crej_reporte = #{reporte}
 			</if>
-			<if test="documento!=null">
+			<if test="documento!=null and documento!=''">
 				and crej_documento = #{documento}
 			</if>
 			<if test="fechaInicioMin!=null">
@@ -44,10 +44,10 @@
 			<if test="fechaFinMax!=null">
 				and drej_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
 			</if>
-			<if test="usuario!=null">
+			<if test="usuario!=null and usuario!=''">
 				and crej_usuario = #{usuario}
 			</if>
-			<if test="url!=null">
+			<if test="url!=null and url!=''">
 				and crej_url = #{url}
 			</if>
 	</sql>
@@ -74,6 +74,7 @@
 	<select id="listar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
 		<include refid="selectReporteEjecucionFragment" />
 		<include refid="whereReporteEjecucionFragment" />
+		order by drej_fechainicio desc
 		<include refid="paginationReporteEjecucionFragment" />
 	</select>
 

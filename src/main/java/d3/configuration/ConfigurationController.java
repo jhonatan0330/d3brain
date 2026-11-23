@@ -17,8 +17,11 @@ import d3.accounting.domain.IndicatorFilterDTO;
 import d3.accounting.domain.IndicatorTargetDTO;
 import d3.accounting.domain.IndicatorTargetFilterDTO;
 import d3.authentication.application.OrganizacionSvc;
+import d3.authentication.application.UsuarioSesionErrorSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
+import d3.authentication.domain.UsuarioSesionErrorDTO;
+import d3.authentication.domain.UsuarioSesionErrorFilterDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -36,6 +39,9 @@ import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
+import d3.document.application.TransaccionErrorSvc;
+import d3.document.domain.TransaccionErrorDTO;
+import d3.document.domain.TransaccionErrorFilterDTO;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
@@ -59,8 +65,11 @@ import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.domain.TemplateDTO;
 import d3.report.application.ReporteBaseSvc;
+import d3.report.application.ReporteEjecucionSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
+import d3.report.domain.ReporteEjecucionDTO;
+import d3.report.domain.ReporteEjecucionFilterDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.upload.domain.CargaArchivoDTO;
@@ -112,6 +121,9 @@ public class ConfigurationController {
 	private final IndicatorTargetService indicadorTargetService;
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
+	private final UsuarioSesionErrorSvc usuarioSesionErrorService;
+	private final ReporteEjecucionSvc reporteEjecucionService;
+	private final TransaccionErrorSvc transaccionErrorService;
 
 	public ConfigurationController(@Lazy ConsecutivoSvc consecutivoService,
 			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
@@ -126,7 +138,9 @@ public class ConfigurationController {
 			@Lazy PropiedadSvc propiedadService, @Lazy RelacionInternaSvc relacionInternaService,
 			@Lazy ExportConfigurationFileService exportService, @Lazy ImportConfigurationFileService importService,
 			@Lazy ArbolEnsambladorSvc arbolEnsambladorService, @Lazy IndicatorService indicadorService,  @Lazy IndicatorTargetService indicadorTargetService,
-			@Lazy RolAccesoSvc rolAccesoService, @Lazy UsuarioSvc usuarioService) {
+			@Lazy RolAccesoSvc rolAccesoService, @Lazy UsuarioSvc usuarioService,
+			@Lazy UsuarioSesionErrorSvc usuarioSesionErrorService, @Lazy ReporteEjecucionSvc reporteEjecucionService,
+			@Lazy TransaccionErrorSvc transaccionErrorService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
 		this.organizacionService = organizacionService;
@@ -153,6 +167,9 @@ public class ConfigurationController {
 		this.indicadorTargetService = indicadorTargetService;
 		this.rolAccesoService = rolAccesoService;
 		this.usuarioService = usuarioService;
+		this.usuarioSesionErrorService = usuarioSesionErrorService;
+		this.reporteEjecucionService = reporteEjecucionService;
+		this.transaccionErrorService = transaccionErrorService;
 	}
 
 	// ==================== CONSECUTIVES ====================
@@ -875,6 +892,37 @@ public class ConfigurationController {
 		if (dto == null || dto.getLlaveTabla() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
 		return indicadorTargetService.activate(dto);
+	}
+
+	// ==================== ERROR LOGS ====================
+
+	@PostMapping("/errors/session/list")
+	public List<UsuarioSesionErrorDTO> listarErroresAutenticacion(@RequestBody UsuarioSesionErrorFilterDTO filter)
+			throws ServerException {
+		if (filter.getFechaMin() == null || filter.getFechaMax() == null) {
+			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar errores de autenticación");
+		}
+		List<UsuarioSesionErrorDTO> errores = usuarioSesionErrorService.listarConsulta(filter);
+		errores.forEach(error -> error.setClave(null));
+		return errores;
+	}
+
+	@PostMapping("/errors/reports/list")
+	public List<ReporteEjecucionDTO> listarErroresReportes(@RequestBody ReporteEjecucionFilterDTO filter)
+			throws ServerException {
+		if (filter.getFechaInicioMin() == null || filter.getFechaInicioMax() == null) {
+			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar errores de reportes");
+		}
+		return reporteEjecucionService.listarConsulta(filter);
+	}
+
+	@PostMapping("/errors/transactions/list")
+	public List<TransaccionErrorDTO> listarErroresTransacciones(@RequestBody TransaccionErrorFilterDTO filter)
+			throws ServerException {
+		if (filter.getFechaInicioMin() == null || filter.getFechaInicioMax() == null) {
+			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar errores de transacciones");
+		}
+		return transaccionErrorService.listarConsulta(filter);
 	}
 
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
