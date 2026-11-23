@@ -9,10 +9,15 @@ import d3.accounting.application.base.IndicatorService;
 import d3.accounting.application.base.IndicatorTargetService;
 import d3.accounting.domain.IndicatorDTO;
 import d3.accounting.domain.IndicatorFilterDTO;
+import d3.accounting.domain.IndicatorTargetFilterDTO;
+import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service("IndicadorCreateAccountingService")
 public class IndicatorCreateService {
+
+	private static final int MAX_CODE_ATTEMPTS = 100;
 
 	private final IndicatorService indicatorService;
 	private final IndicatorTargetService targetService;
@@ -22,64 +27,55 @@ public class IndicatorCreateService {
 		this.targetService = targetService;
 	}
 
-	public List<IndicatorDTO> getToDashboard() throws ServerException{
-		return this.indicatorService.getMany(new IndicatorFilterDTO());
-	}
-		/*
-	
-	public ResultMapDTO getResultado(String indicadorId, TimeFrameDTO periodo) throws ServerException {
-		IndicatorDTO indicador = getById(indicadorId);
-		if (indicador == null)
-			throw new ServerException("No se identifica el indicador: " + indicadorId);
+	public IndicatorDTO create(IndicatorDTO dto) throws ServerException {
+		if (dto == null)
+			throw new ServerException("No se puede crear un indicador sin datos");
+		if (dto.getNombre() == null || dto.getNombre().trim().isEmpty())
+			throw new ServerException("El nombre del indicador es obligatorio");
 
-		ResultMapDTO resultado = mapper.getResultadoByCodigo(indicador.getCodigo());
-		if (resultado == null)
-			resultado = new ResultMapDTO();
-		resultado.setKey(indicadorId);
-		resultado.setState(indicador.getEstado());
-		return resultado;
+		dto.setCodigo(this.generarCodigo(dto));
+		if (dto.getEstado() == null)
+			dto.setEstado(SharedConstants.STATE_ACTIVE);
+
+		this.indicatorService.save(dto);
+		return dto;
 	}
 
-	public List<ResultMapDTO> getTabla(String indicadorId) throws ServerException {
-		IndicatorDTO indicador = getById(indicadorId);
-		if (indicador == null)
-			throw new ServerException("No se identifica el indicador: " + indicadorId);
-		List<ResultMapDTO> tabla = mapper.getTablaByCodigo(indicador.getCodigo());
-		return tabla == null ? new ArrayList<>() : tabla;
+	private String generarCodigo(IndicatorDTO dto) throws ServerException {
+		String base = (dto.getCodigo() != null && !dto.getCodigo().trim().isEmpty())
+				? D3Utils.formatFunction(dto.getCodigo())
+				: D3Utils.formatFunction(dto.getNombre());
+
+		if (base == null || base.isEmpty())
+			base = "indicador";
+
+		String codigo = base;
+		int consecutivo = 2;
+		while (this.existeCodigo(codigo)) {
+			if (consecutivo > MAX_CODE_ATTEMPTS)
+				throw new ServerException("No se pudo generar un codigo unico para el indicador");
+			codigo = base + "_" + consecutivo;
+			consecutivo++;
+		}
+		return codigo;
 	}
 
-	private void cargarTargets(IndicatorDTO indicador) {
-		if (indicador == null || indicador.getLlaveTabla() == null)
-			return;
-		indicador.setTargets(targetMapper.getByIndicador(indicador.getLlaveTabla()));
+	private boolean existeCodigo(String codigo) throws ServerException {
+		IndicatorFilterDTO filtro = new IndicatorFilterDTO();
+		filtro.setCodigo(codigo);
+		filtro.setStartRow(0);
+		filtro.setEndRow(1);
+		List<IndicatorDTO> encontrados = this.indicatorService.getMany(filtro);
+		return encontrados != null && !encontrados.isEmpty();
 	}
 
-	private void cargarTargets(List<IndicatorDTO> indicadores) {
-		if (indicadores == null || indicadores.isEmpty())
-			return;
-		List<String> keys = indicadores.stream().map(IndicatorDTO::getLlaveTabla)
-				.filter(key -> key != null).collect(Collectors.toList());
-		if (keys.isEmpty())
-			return;
-		Map<String, List<IndicatorTargetDTO>> targets = targetMapper.getByIndicadores(keys).stream()
-				.collect(Collectors.groupingBy(IndicatorTargetDTO::getIndicador));
+	public List<IndicatorDTO> getToDashboard() throws ServerException {
+		List<IndicatorDTO> indicadores = this.indicatorService.getMany(new IndicatorFilterDTO());
 		for (IndicatorDTO indicador : indicadores) {
-			indicador.setTargets(targets.getOrDefault(indicador.getLlaveTabla(), new ArrayList<>()));
+			IndicatorTargetFilterDTO filtro = new IndicatorTargetFilterDTO();
+			filtro.setIndicador(indicador.getLlaveTabla());
+			indicador.setTargets(this.targetService.getMany(filtro));
 		}
+		return indicadores;
 	}
-
-	private void guardarTargets(IndicatorDTO dto) {
-		if (dto.getTargets() == null || dto.getTargets().isEmpty())
-			return;
-		List<IndicatorTargetDTO> targets = dto.getTargets().stream().filter(target -> target != null)
-				.collect(Collectors.toList());
-		if (targets.isEmpty())
-			return;
-		for (IndicatorTargetDTO target : targets) {
-			target.setLlaveTabla(UUID.randomUUID().toString().replaceAll("-", ""));
-			target.setIndicador(dto.getLlaveTabla());
-		}
-		targetMapper.insertMany(dto.getLlaveTabla(), targets);
-	}
-*/
 }

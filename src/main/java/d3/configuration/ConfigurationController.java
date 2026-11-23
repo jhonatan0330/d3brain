@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import d3.accounting.application.IndicatorCreateService;
 import d3.accounting.application.base.IndicatorService;
 import d3.accounting.application.base.IndicatorTargetService;
 import d3.accounting.domain.IndicatorDTO;
@@ -118,6 +119,7 @@ public class ConfigurationController {
 	private final ArbolEnsambladorSvc arbolEnsambladorService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
 	private final IndicatorService indicadorService;
+	private final IndicatorCreateService indicadorCreateService;
 	private final IndicatorTargetService indicadorTargetService;
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
@@ -138,6 +140,7 @@ public class ConfigurationController {
 			@Lazy PropiedadSvc propiedadService, @Lazy RelacionInternaSvc relacionInternaService,
 			@Lazy ExportConfigurationFileService exportService, @Lazy ImportConfigurationFileService importService,
 			@Lazy ArbolEnsambladorSvc arbolEnsambladorService, @Lazy IndicatorService indicadorService,  @Lazy IndicatorTargetService indicadorTargetService,
+			@Lazy IndicatorCreateService indicadorCreateService,
 			@Lazy RolAccesoSvc rolAccesoService, @Lazy UsuarioSvc usuarioService,
 			@Lazy UsuarioSesionErrorSvc usuarioSesionErrorService, @Lazy ReporteEjecucionSvc reporteEjecucionService,
 			@Lazy TransaccionErrorSvc transaccionErrorService) {
@@ -164,6 +167,7 @@ public class ConfigurationController {
 		this.arbolEnsambladorService = arbolEnsambladorService;
 		this.propertyTypeService = propiedadValorDefinidoService;
 		this.indicadorService = indicadorService;
+		this.indicadorCreateService = indicadorCreateService;
 		this.indicadorTargetService = indicadorTargetService;
 		this.rolAccesoService = rolAccesoService;
 		this.usuarioService = usuarioService;
@@ -831,8 +835,7 @@ public class ConfigurationController {
 
 	@PostMapping("/indicators/create")
 	public IndicatorDTO crearIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
-		indicadorService.save(dto);
-		return dto;
+		return indicadorCreateService.create(dto);
 	}
 
 	@PostMapping("/indicators/update")
