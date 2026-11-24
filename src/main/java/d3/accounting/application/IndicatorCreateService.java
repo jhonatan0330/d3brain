@@ -1,5 +1,6 @@
 package d3.accounting.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -10,7 +11,11 @@ import d3.accounting.application.base.IndicatorTargetService;
 import d3.accounting.domain.IndicatorDTO;
 import d3.accounting.domain.IndicatorFilterDTO;
 import d3.accounting.domain.IndicatorTargetFilterDTO;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.document.application.field.Propiedades;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 
@@ -21,10 +26,12 @@ public class IndicatorCreateService {
 
 	private final IndicatorService indicatorService;
 	private final IndicatorTargetService targetService;
+	private final PropertyGetWithCacheService cacheService;
 
-	public IndicatorCreateService(@Lazy IndicatorService indicatorService, @Lazy IndicatorTargetService targetService) {
+	public IndicatorCreateService(@Lazy IndicatorService indicatorService, @Lazy IndicatorTargetService targetService, @Lazy PropertyGetWithCacheService cacheService) {
 		this.indicatorService = indicatorService;
 		this.targetService = targetService;
+		this.cacheService = cacheService;
 	}
 
 	public IndicatorDTO create(IndicatorDTO dto) throws ServerException {
@@ -71,11 +78,17 @@ public class IndicatorCreateService {
 
 	public List<IndicatorDTO> getToDashboard() throws ServerException {
 		List<IndicatorDTO> indicadores = this.indicatorService.getMany(new IndicatorFilterDTO());
+		List<IndicatorDTO> result = new ArrayList<>();
 		for (IndicatorDTO indicador : indicadores) {
+			indicador.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.INDICATOR,
+					indicador.getLlaveTabla(), null, SessionContext.getCurrentUserOrNull()));
+			
+			if(Propiedades.obtenerParametro(indicador, Propiedades.PERMISO_VER_INDICADOR)==null) continue;
 			IndicatorTargetFilterDTO filtro = new IndicatorTargetFilterDTO();
 			filtro.setIndicador(indicador.getLlaveTabla());
 			indicador.setTargets(this.targetService.getMany(filtro));
+			result.add(indicador);
 		}
-		return indicadores;
+		return result;
 	}
 }

@@ -962,6 +962,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.VINCULO_DELETE:
 		case Propiedades.TEMPLATE_VOUCHER:
 		case Propiedades.PLANTILLA_ANULAR:
+		case Propiedades.INDICADOR_TEMPLATE_ACTION:
 		case Propiedades.DETALLE_CATEGORIA: {
 			identificadorPlantilla(dto);
 			break;
@@ -1315,6 +1316,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_REPLACE) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_ESPECIAL) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.BODEGA_MOVIMIENTO) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
 					newPropiedad.setTexto(propiedadDTO.getTexto());

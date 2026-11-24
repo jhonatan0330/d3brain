@@ -690,3 +690,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_319' , 'T', 'TRANSICION OCULTA', 'TRANSICION_OCULTA', 'REQUISITO',  true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_320' , 'I', 'VER INDICADOR', 'PERMISO_VER_INDICADOR', 'REQUISITO', true);
+
+RT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_321' , 'I', 'PLANTILLAS QUE PUEDEN ALIMENTAR EL INDICADOR', 'INDICADOR_TEMPLATE_ACTION', 'REQUISITO');

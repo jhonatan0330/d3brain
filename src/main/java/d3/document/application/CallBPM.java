@@ -207,7 +207,7 @@ public class CallBPM {
 
 		plantillasRevisadas.add(procesoDTO.getPlantilla());
 		doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), documento, saldoDocumento, plantillasRevisadas,
-				documentosGestionados, transaccion, caminosValidados, expediente.getNombre(), pGenerator);
+				documentosGestionados, transaccion, caminosValidados, pGenerator);
 	}
 
 	// Va a existir algun problema en el futuro en casos que los documentos no hagan
@@ -216,7 +216,7 @@ public class CallBPM {
 	// se comporte
 	private void doBpmInInnerDocuments(String currentDocumentId, PedidoVentaDTO startDocument,
 			BigDecimal saldoDocumento, List<String> plantillasRevisadas, List<String> documentosGestionados,
-			String transaccion, List<String> caminosValidados, String currentDocumentName, PedidoVentaDTO pGenerator)
+			String transaccion, List<String> caminosValidados, PedidoVentaDTO pGenerator)
 			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(currentDocumentId);
 		if (gestionables != null && !gestionables.isEmpty()) {
@@ -531,7 +531,7 @@ public class CallBPM {
 				}
 				doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, saldoDoc, caminosGestionar,
 						documentosGestionados, pCampo.getTransaccionRegistro(), caminosValidados,
-						procesoDTO.getNombre(), pGenerator);
+						pGenerator);
 			}
 		}
 	}

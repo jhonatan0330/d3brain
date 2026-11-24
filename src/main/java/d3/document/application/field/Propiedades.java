@@ -306,6 +306,8 @@ public class Propiedades {
 
 	// ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
+	public static final String INDICADOR_TEMPLATE_ACTION = "INDICADOR_TEMPLATE_ACTION";
+	public static final String PERMISO_VER_INDICADOR = "PERMISO_VER_INDICADOR";
 
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO,
 			Propiedades.INFORMATIVE_DATA, Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
