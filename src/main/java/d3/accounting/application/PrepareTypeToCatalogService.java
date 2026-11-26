@@ -58,7 +58,7 @@ public class PrepareTypeToCatalogService {
 			_type.setService(pServiceId);
 			_type.setName(ws.getNombre());
 			_type.setCode(ws.getCodigo());
-			_type.setPattern(AccountConst.TYPE_PATTERN_COMPROBANTE);
+			_type.setPattern(AccountConst.TYPE_PATTERN_INDICATOR);
 			_type.setCatalog(Propiedades.obtenerValor(ws, Propiedades.API_ACCOUNT_CATALOG));
 			typeService.save(_type);
 			// Esto evita un null ya que el guardar no me vuelve a colocar el activo

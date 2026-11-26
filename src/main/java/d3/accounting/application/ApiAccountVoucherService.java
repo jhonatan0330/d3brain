@@ -118,14 +118,15 @@ public class ApiAccountVoucherService {
 
 	private void validateItem(VoucherRequest item) throws ServerException {
 
-		if (item.getCatalog() == null || item.getCatalog().isEmpty())
-			throw new ServerException("El codigo del catalogo no se reconoce");
-		// if (item.getType() == null || item.getType().isEmpty())
-		// throw new ServerException("No se encuentra el tipo de documento");
-
 		if (item.getConcept() == null || item.getConcept().isEmpty())
 			throw new ServerException("No se registra el concepto");
 
+		
+		if (item.getCatalog() == null || item.getCatalog().isEmpty()) {
+			item.setCatalog("D3");
+		}
+		
+		
 		CatalogFilterDTO filter = new CatalogFilterDTO();
 		filter.setCode(item.getCatalog().toUpperCase());
 		filter.setState(SharedConstants.STATE_ACTIVE);

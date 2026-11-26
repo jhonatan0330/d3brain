@@ -16,8 +16,6 @@ public class AccountDTO extends SharedDataObject {
 	private Integer level;
 	private String type;
 	private String operation;
-	private String template;
-	private String field;
 	private String document;
 
 	public String getCatalog() {
@@ -98,22 +96,6 @@ public class AccountDTO extends SharedDataObject {
 
 	public void setOperation(String operation) {
 		this.operation = operation;
-	}
-
-	public String getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	public String getField() {
-		return field;
-	}
-
-	public void setField(String field) {
-		this.field = field;
 	}
 
 	public String getDocument() {

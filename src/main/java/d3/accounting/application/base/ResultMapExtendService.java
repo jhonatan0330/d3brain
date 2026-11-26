@@ -113,5 +113,15 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+	
+	public ResultMapDTO getIndicator(String accountId, String timeFrameId) throws ServerException {
+		try {
+			return mapper.getIndicator(accountId, timeFrameId);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
 
 }

@@ -90,7 +90,7 @@ public class VoucherCreateService {
 
 	private void configureAccounts(Voucher _voucher, String catalogKey) throws ServerException {
 		for (VoucherLine item : _voucher.getRecords()) {
-			AccountDTO account = accountService.getById(item.getLine().getAccount());
+			AccountDTO account = accountService.getIndicatorById(item.getLine().getAccount());
 			if (account == null)
 				throw new ServerException("La cuenta no existe en la base de datos");
 			if (catalogKey != null && account.getCatalog().compareTo(catalogKey) != 0)

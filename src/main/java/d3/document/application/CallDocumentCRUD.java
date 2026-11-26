@@ -15,7 +15,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import d3.accounting.application.VoucherCreateFromTemplateService;
 import d3.accounting.application.VoucherDeleteService;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.application.UsuarioRolSvc;
@@ -91,7 +90,6 @@ public class CallDocumentCRUD {
 	private final CallUpdateByRelations createUpdateByRelationFields;
 
 	private final VoucherDeleteService voucherDeleteService;
-	private final VoucherCreateFromTemplateService voucherCreateFromTemplateService;
 
 	public CallDocumentCRUD(@Lazy CampoAdaptador adaptador, @Lazy PedidoVentaSvc pedidoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy DocumentoTransaccionSvc transaccionSvc,
@@ -107,8 +105,7 @@ public class CallDocumentCRUD {
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
 			@Lazy PedidoVentaDineroSvc dineroService, @Lazy CallBPM bpmService,
 			@Lazy HomologateAdapterService homologateService, @Lazy TipoVinculo tipoVinculoService,
-			@Lazy CallUpdateByRelations createUpdateByRelationFields, @Lazy VoucherDeleteService voucherDeleteService,
-			@Lazy VoucherCreateFromTemplateService voucherCreateFromTemplateService) {
+			@Lazy CallUpdateByRelations createUpdateByRelationFields, @Lazy VoucherDeleteService voucherDeleteService) {
 		this.adaptador = adaptador;
 		this.pedidoService = pedidoService;
 		this.estadoService = estadoService;
@@ -136,7 +133,6 @@ public class CallDocumentCRUD {
 		this.tipoVinculoService = tipoVinculoService;
 		this.createUpdateByRelationFields = createUpdateByRelationFields;
 		this.voucherDeleteService = voucherDeleteService;
-		this.voucherCreateFromTemplateService = voucherCreateFromTemplateService;
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -507,7 +503,7 @@ public class CallDocumentCRUD {
 				apiService.prepareApiToExecution(_iApi.getValor(), dto, null, null, null);
 			}
 		}
-		monitoringVoucher(pedido, plantilla);
+		//monitoringVoucher(pedido, plantilla);
 		voucherCreate(dto);
 		makeVinculateDocument(dto);
 		generateNotifications(dto, plantilla, pedido);
@@ -582,13 +578,13 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void monitoringVoucher(PedidoVentaDTO dto, TemplateDTO plantilla) throws ServerException {
+/*	private void monitoringVoucher(PedidoVentaDTO dto, TemplateDTO plantilla) throws ServerException {
 		PropiedadDTO _property = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_MONITOR);
 		if (_property == null)
 			return;
 		voucherCreateFromTemplateService.call(dto);
 	}
-
+*/
 	private void voucherCreate(PedidoVentaDTO dto) throws ServerException {
 		List<PropiedadDTO> _PropertyListToAPis = cacheService.getByValueWithoutField(
 				PropiedadValorDefinidoDTO.API_SERVICE, Propiedades.TEMPLATE_VOUCHER, dto.getPlantilla(),

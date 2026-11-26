@@ -26,6 +26,7 @@ import d3.accounting.application.VoucherDeleteService;
 import d3.accounting.application.VoucherGetService;
 import d3.accounting.application.VoucherRangeService;
 import d3.accounting.application.VoucherReCreateService;
+import d3.accounting.application.base.ResultMapExtendService;
 import d3.accounting.domain.AccountDTO;
 import d3.accounting.domain.CatalogDTO;
 import d3.accounting.domain.IndicatorDTO;
@@ -56,13 +57,15 @@ public class AccountingController {
 	private final ApiAccountVoucherService voucherService;
 	private final StackAccountProccessService accountService;
 	private final IndicatorCreateService indicatorService;
+	private final ResultMapExtendService resultMapExtendService;
 
 	public AccountingController(@Lazy VoucherCreateService createService, @Lazy VoucherDeleteService deleteService,
 			@Lazy VoucherGetService getVoucherService, @Lazy VoucherReCreateService recreateService,
 			@Lazy VoucherRangeService range, @Lazy PlanGetCatalogService getCatalogService,
 			@Lazy PlanGetAccountService getAccountService, @Lazy PlanGetBalanceService getBalanceService,
 			@Lazy ApiAuthorizeService apiAuthorizeService, @Lazy ApiAccountVoucherService voucherService,
-			@Lazy StackAccountProccessService accountService, @Lazy IndicatorCreateService indicatorService) {
+			@Lazy StackAccountProccessService accountService, @Lazy IndicatorCreateService indicatorService,
+			@Lazy ResultMapExtendService resultMapExtendService) {
 		this.createService = createService;
 		this.deleteService = deleteService;
 		this.getVoucherService = getVoucherService;
@@ -75,6 +78,7 @@ public class AccountingController {
 		this.voucherService = voucherService;
 		this.accountService = accountService;
 		this.indicatorService = indicatorService;
+		this.resultMapExtendService = resultMapExtendService;
 	}
 
 	// ==================== VOUCHER ENDPOINTS ====================
@@ -155,17 +159,19 @@ public class AccountingController {
 	public List<IndicatorDTO> getIndicators() throws ServerException {
 		return indicatorService.getToDashboard();
 	}
+	
+	@GetMapping("/indicators/{key}/result/{time}")
+	public ResultMapDTO getIndicatorResult(@PathVariable(name = "key") String pKey,
+			@PathVariable(name = "time") String pTime) throws ServerException {
+		return resultMapExtendService.getIndicator(pKey, pTime);
+	}
 	/*
 	@GetMapping("/indicators/{key}")
 	public IndicatorDTO getIndicator(@PathVariable(name = "key") String pKey) throws ServerException {
 		return indicatorService.getById(pKey);
 	}
 
-	@PostMapping("/indicators/{key}/result")
-	public ResultMapDTO getIndicatorResult(@PathVariable(name = "key") String pKey,
-			@RequestBody TimeFrameDTO periodo) throws ServerException {
-		return indicatorService.getResultado(pKey, periodo);
-	}
+	
 
 	@GetMapping("/indicators/{key}/table")
 	public List<ResultMapDTO> getIndicatorTable(@PathVariable(name = "key") String pKey) throws ServerException {
@@ -177,17 +183,8 @@ public class AccountingController {
 	@PostMapping("/api/voucher")
 	public SharedIdResponse send(@RequestHeader(name = "x-api-key") String apiKey, @RequestBody VoucherRequest item)
 			throws ServerException {
-		// TODO: 
-		//String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-		//SharedToken adminToken = autenticacionService.getUserToken(token);
 		apiAuthorizeService.call(apiKey);
-		//SharedToken previous = SessionContext.getCurrent();
-		//try {
-			//SessionContext.setCurrent(adminToken);
-			return voucherService.call(item);
-		//} finally {
-		//	SessionContext.setCurrent(previous);
-		//}
+		return voucherService.call(item);
 	}
 
 	@GetMapping("/api/ok")

@@ -33,5 +33,7 @@ public interface ResultMapExtendMapper {
 	TimeFrameDTO selectTimeFrameLevel(@Param("level") int level);
 
 	BigDecimal getPreviousBalance(@Param("accountId") String accountId, @Param("timeFrameId") String timeFrameId);
+	
+	ResultMapDTO getIndicator(@Param("accountId") String accountId, @Param("timeFrameId") String timeFrameId);
 
 }

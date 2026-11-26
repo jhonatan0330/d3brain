@@ -230,7 +230,7 @@ public class Propiedades {
 	public static final String TEMPLATE_MESSAGE_SQL = "TEMPLATE_MESSAGE_SQL";
 	public static final String HTML_DOCUMENT_SQL = "HTML_DOCUMENT_SQL";
 
-	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
+	//public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 	public static final String API_ACCOUNT_CATALOG = "API_ACCOUNT_CATALOG";
 	public static final String REPORT_MODULE_REFERENCE = "REPORT_MODULE_REFERENCE";
 
@@ -308,6 +308,7 @@ public class Propiedades {
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
 	public static final String INDICADOR_TEMPLATE_ACTION = "INDICADOR_TEMPLATE_ACTION";
 	public static final String PERMISO_VER_INDICADOR = "PERMISO_VER_INDICADOR";
+	public static final String INDICADOR_DISPATCH_CALCULATE = "INDICADOR_DISPATCH_CALCULATE";
 
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO,
 			Propiedades.INFORMATIVE_DATA, Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,

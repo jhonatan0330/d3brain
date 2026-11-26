@@ -54,7 +54,8 @@ public class PlanGetAccountService {
 		filterA.setParent(parentId);
 		filterA.setCode(accountCode.toUpperCase());
 		filterA.setState(SharedConstants.STATE_ACTIVE);
-		return accountService.getOne(filterA);
+		// Aqui consulto con los indicadores
+		return accountService.findAccountByCode(filterA);
 	}
 
 	public AccountDTO findAccountByDocumentId(String catalogId, String documentId, String parentId)
@@ -68,12 +69,7 @@ public class PlanGetAccountService {
 	}
 
 	public AccountDTO getById(String id) throws ServerException {
-		return accountService.getById(id);
+		return accountService.getIndicatorById(id);
 	}
 	
-	public AccountDTO findAccountByTemplateId(String templateId) throws ServerException {
-		AccountFilterDTO filterA = new AccountFilterDTO();
-		filterA.setTemplate(templateId);
-		return accountService.getOne(filterA);
-	}
 }

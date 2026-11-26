@@ -147,6 +147,29 @@
 		order by ccue_wbs
 	</select>
 	
+	<select id="getIndicator" resultType="ResultMapDTO">
+		select 
+			crmp_llave as key
+			,ccue_llave as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
+			,cptm_llave as timeFrame
+			,cptm_codigo as timeFrameName
+			,nrmp_cantidad as quantity
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,crmp_estado as state 
+		from account.maparesultados_rmp 
+			left join account.periodotiempo_ptm on crmp_periodo = cptm_llave
+			left join account.cuenta_cue on crmp_cuenta = ccue_llave
+		where 
+			crmp_cuenta = '${accountId}'
+			and cptm_codigo = '${timeFrameId}'
+	</select>
+	
 	<select id="getItemsAccount" resultType="ResultMapDTO">
 		select 
 			crmp_llave as key

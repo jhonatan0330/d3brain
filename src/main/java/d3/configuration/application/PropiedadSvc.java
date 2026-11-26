@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.accounting.application.PlanCreateAccountTemplateService;
 import d3.accounting.application.base.CatalogService;
 import d3.accounting.domain.CatalogDTO;
 import d3.accounting.domain.CatalogFilterDTO;
@@ -75,7 +74,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			@Lazy UsuarioSvc usuarioService, @Lazy WebServiceSvc apiService,
 			@Lazy HomologateAdapterService homologateService, @Lazy JasperReportCache reportCacheService,
 			@Lazy ProcessTemplate templatesService, @Lazy PropertyGetWithCacheService cacheService,
-			@Lazy PlanCreateAccountTemplateService createAccountService, @Lazy PropiedadMapper propiedadMapper) {
+			@Lazy PropiedadMapper propiedadMapper) {
 		this.catalogService = catalogService;
 		this.campoService = campoService;
 		this.plantillaService = plantillaService;
@@ -91,7 +90,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		this.relacionService = relacionService;
 		this.usuarioService = usuarioService;
 		this.apiService = apiService;
-		this.createAccountService = createAccountService;
 		this.homologateService = homologateService;
 		this.reportCacheService = reportCacheService;
 		this.templatesService = templatesService;
@@ -115,7 +113,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private final RelacionInternaSvc relacionService;
 	private final UsuarioSvc usuarioService;
 	private final WebServiceSvc apiService;
-	private final PlanCreateAccountTemplateService createAccountService;
 
 	private final HomologateAdapterService homologateService;
 
@@ -1072,10 +1069,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		case Propiedades.API_ACCOUNT_CATALOG: {
 			identificadorCatalogo(dto);
-			break;
-		}	
-		case Propiedades.PLANTILLA_MONITOR: {
-			this.createAccountService.call(dto.getCampo());
 			break;
 		}
 		}

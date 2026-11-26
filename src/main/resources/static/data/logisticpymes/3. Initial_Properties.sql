@@ -458,8 +458,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_multiple) 
 	VALUES('PROP_238' , 'W', 'REEMPLAZAR CODIGO REFERENCIADO TIPO LISTA', 'API_CODE_REFERENCE_LIST', 'REQUISITO', true, true);
 
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
-	VALUES('PROP_239' , 'C', 'MONITOREAR', 'PLANTILLA_MONITOR', 'REQUISITO', true);
+--INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+--	VALUES('PROP_239' , 'C', 'MONITOREAR', 'PLANTILLA_MONITOR', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_240' , 'T', 'MENSAJE ADJUNTO URL', 'MENSAJE_ADJUNTO_URL', 'REQUISITO', true);	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
@@ -694,5 +694,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_320' , 'I', 'VER INDICADOR', 'PERMISO_VER_INDICADOR', 'REQUISITO', true);
 
-RT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_321' , 'I', 'PLANTILLAS QUE PUEDEN ALIMENTAR EL INDICADOR', 'INDICADOR_TEMPLATE_ACTION', 'REQUISITO');
+	

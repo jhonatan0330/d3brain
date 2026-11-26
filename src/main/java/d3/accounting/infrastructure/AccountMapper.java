@@ -17,6 +17,10 @@ public interface AccountMapper {
 
 	AccountDTO getOne(AccountFilterDTO filter);
 
+	AccountDTO findIndicatorByCode(AccountFilterDTO filter);
+	
+	AccountDTO findIndicator(String id);
+
 	List<AccountDTO> getMany(AccountFilterDTO filter);
 
 }

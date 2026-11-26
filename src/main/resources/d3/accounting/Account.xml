@@ -15,8 +15,6 @@
 			,ncue_nivel as level
 			,ccue_tipo as type
 			,ccue_naturaleza as operation
-			,ccue_plantilla as template
-			,ccue_campo as field
 			,ccue_documento as document
 			,ccue_estado as state
 		from account.cuenta_cue a
@@ -34,8 +32,6 @@
 <if test="level!=null">		and ncue_nivel = #{level}</if>
 <if test="type!=null">		and ccue_tipo = #{type}</if>
 <if test="operation!=null">		and ccue_naturaleza = #{operation}</if>
-<if test="template!=null">		and ccue_plantilla = #{template}</if>
-<if test="field!=null">		and ccue_campo = #{field}</if>
 <if test="document!=null">		and ccue_documento = #{document}</if>
 <if test="filter!=null">		and (upper(ccue_nombre) like upper('%' || #{filter} || '%') or upper(ccue_codigo) like upper('%' || #{filter} || '%'))</if>
 	</sql>
@@ -55,6 +51,48 @@
 		LIMIT 2
 	</select>
 	
+	<select id="findIndicatorByCode" parameterType="AccountFilterDTO" resultType="AccountDTO">
+		<include refid="selectAccountFragment" />
+		where ccue_estado = 'A' and ccue_catalogo = #{catalog}
+		<if test="parent!=null">and ccue_padre = #{parent}</if>
+		and upper(ccue_codigo) = upper(#{code})
+		union
+		select
+			cind_llave as key
+			,#{catalog} as catalog
+			,null as wbs
+			,cind_nombre as name
+			,cind_codigo as code
+			,null as parent
+			,1 as level
+			,'O' as type
+			,'D' as operation
+			,null as document
+			,cind_estado as state
+		from account.indicador_ind ii 
+		where cind_estado = 'A' and upper(cind_codigo) = upper(#{code})
+	</select>
+	
+	<select id="findIndicator" parameterType="AccountFilterDTO" resultType="AccountDTO">
+		<include refid="selectAccountFragment" />
+		where ccue_llave = #{id}
+		union
+		select
+			cind_llave as key
+			,'D3' as catalog
+			,null as wbs
+			,cind_nombre as name
+			,cind_codigo as code
+			,null as parent
+			,1 as level
+			,'O' as type
+			,'D' as operation
+			,null as document
+			,cind_estado as state
+		from account.indicador_ind ii 
+		where cind_llave = #{id}
+	</select>
+
 	<select id="getMany" parameterType="AccountFilterDTO" resultType="AccountDTO">
 		<include refid="selectAccountFragment" />
 		<include refid="whereAccountFragment" />
@@ -78,8 +116,6 @@
 		<if test="level!=null">,ncue_nivel</if>
 		<if test="type!=null">,ccue_tipo</if>
 		<if test="operation!=null">,ccue_naturaleza</if>
-		<if test="template!=null">,ccue_plantilla</if>
-		<if test="field!=null">,ccue_campo</if>
 		<if test="document!=null">,ccue_documento</if>
 		<if test="state!=null">,ccue_estado</if>
 		) values (#{key}
@@ -91,8 +127,6 @@
 		<if test="level!=null">,#{level}</if>
 		<if test="type!=null">,#{type}</if>
 		<if test="operation!=null">,#{operation}</if>
-		<if test="template!=null">,#{template}</if>
-		<if test="field!=null">,#{field}</if>
 		<if test="document!=null">,#{document}</if>
 		<if test="state!=null">,#{state}</if>
 		)
@@ -109,8 +143,6 @@
 		ncue_nivel = #{level},
 		ccue_tipo = #{type},
 		ccue_naturaleza = #{operation},
-		ccue_plantilla = #{template},
-		ccue_campo = #{field},
 		ccue_documento = #{document},
 		ccue_estado =#{state}
 		<include refid="whereAccountPrimaryKeyFragment" />

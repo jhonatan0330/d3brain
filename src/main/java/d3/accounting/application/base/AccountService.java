@@ -29,10 +29,26 @@ public class AccountService {
 		dto.setKey(id);
 		return mapper.getOne(dto);
 	}
+	
+	public AccountDTO getIndicatorById(String id) throws ServerException {
+		if (id == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. Account");
+		return mapper.findIndicator(id);
+	}
 
 	public AccountDTO getOne(AccountFilterDTO dto) throws ServerException {
 		try {
 			return mapper.getOne(dto);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
+
+	public AccountDTO findAccountByCode(AccountFilterDTO dto) throws ServerException {
+		try {
+			return mapper.findIndicatorByCode(dto);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {

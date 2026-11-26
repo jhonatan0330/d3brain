@@ -91,4 +91,5 @@ public class IndicatorCreateService {
 		}
 		return result;
 	}
+
 }
